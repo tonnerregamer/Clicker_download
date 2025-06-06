@@ -301,11 +301,12 @@
         <div class="section download-button-container">
             <h2>⬇️ Téléchargez le jeu maintenant !</h2>
             <!-- IMPORTANT : Remplacez "clicker.exe" par le nom exact de votre fichier exécutable -->
-            <a href="game/clicker.exe" class="download-button" download>
+            <button id="download-button" class="download-button"> <!-- Changement de <a> en <button> -->
                 <i class="fas fa-download"></i> Télécharger le clicker (Windows)
-            </a>
-            <div class="warning"> <!-- Changement ici: de <p> à <div> -->
-                <ul> <!-- Nouvelle liste non ordonnée pour les messages d'avertissement -->
+            </button>
+            <p id="download-count" style="margin-top: 10px; font-size: 1.1em; color: #555;">Nombre de téléchargements : 0</p>
+            <div class="warning">
+                <ul>
                     <li><strong>Attention :</strong> Le fichier est un exécutable (.exe). Votre navigateur ou votre antivirus peut afficher un avertissement de sécurité. C'est un comportement normal pour les fichiers .exe. Veuillez confirmer le téléchargement si vous êtes sûr de la source et que le fichier est fiable.</li>
                     <li><strong>attention temporaire</strong> le (.exe) a un problème ou la console est activé en arrier plan sela ne changera votre gamplay, il sera patch bientot</li>
                 </ul>
@@ -394,6 +395,28 @@
                 console.log("Accès Discord annulé par l'utilisateur.");
             }
             // Si l'utilisateur clique sur "Annuler", rien ne se passe et il reste sur la page actuelle.
+        });
+
+        // Compteur de téléchargements
+        let downloads = parseInt(localStorage.getItem('gameDownloads')) || 0; // Charge le nombre de téléchargements depuis le stockage local, ou 0 si inexistant
+        const downloadCountElement = document.getElementById('download-count');
+        const downloadButton = document.getElementById('download-button');
+
+        function updateDownloadCount() {
+            downloadCountElement.textContent = `Nombre de téléchargements : ${downloads}`;
+        }
+
+        // Met à jour le compteur au chargement de la page
+        updateDownloadCount();
+
+        // Ajoute un écouteur d'événements au bouton de téléchargement
+        downloadButton.addEventListener('click', () => {
+            downloads++; // Incrémente le compteur
+            localStorage.setItem('gameDownloads', downloads); // Sauvegarde dans le stockage local
+            updateDownloadCount(); // Met à jour l'affichage
+
+            // Lance le téléchargement du fichier
+            window.location.href = 'game/clicker.exe';
         });
     </script>
 </body>
