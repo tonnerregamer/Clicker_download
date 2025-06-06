@@ -380,7 +380,6 @@
         assistanceLink.addEventListener('click', (event) => {
             event.preventDefault(); // Empêche la navigation par défaut
 
-            // Revert to window.prompt as it was the last "safe" alternative for confirm()
             const userConfirmed = window.prompt("Voulez-vous rejoindre notre serveur Discord pour l'assistance ? Tapez 'oui' pour confirmer.");
 
             if (userConfirmed && userConfirmed.toLowerCase() === 'oui') {
@@ -395,8 +394,8 @@
         const downloadCountElement = document.getElementById('download-count');
         const downloadButton = document.getElementById('download-button');
         
-        // Indicateur pour savoir si l'utilisateur a déjà été compté pour le téléchargement
-        let hasDownloadedForCounter = localStorage.getItem('hasDownloadedForCounter') === 'true'; 
+        // Suppression de l'indicateur "hasDownloadedForCounter" pour compter chaque clic de téléchargement
+        // let hasDownloadedForCounter = localStorage.getItem('hasDownloadedForCounter') === 'true'; 
 
         function updateDownloadCount() {
             downloadCountElement.textContent = `Nombre de téléchargements : ${downloads}`;
@@ -409,13 +408,11 @@
         downloadButton.addEventListener('click', (event) => {
             event.preventDefault(); // Empêche le comportement par défaut du bouton (téléchargement immédiat par un lien)
 
-            if (!hasDownloadedForCounter) { // Seulement si l'utilisateur n'a pas déjà été compté
-                downloads++; // Incrémente le compteur global
-                localStorage.setItem('gameDownloads', downloads); // Sauvegarde le nouveau total global
-                localStorage.setItem('hasDownloadedForCounter', 'true'); // Marque comme compté pour cet utilisateur
-                hasDownloadedForCounter = true; // Met à jour la variable en mémoire
-                updateDownloadCount(); // Met à jour l'affichage
-            }
+            // Incrémente le compteur à chaque clic, la limitation "une fois par personne" n'est plus active
+            downloads++; 
+            localStorage.setItem('gameDownloads', downloads); // Sauvegarde le nouveau total global
+            updateDownloadCount(); // Met à jour l'affichage
+            
             // Lance le téléchargement du fichier directement
             window.location.href = 'game/clicker.exe'; 
         });
