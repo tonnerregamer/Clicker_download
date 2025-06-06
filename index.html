@@ -305,6 +305,8 @@
                 <i class="fas fa-download"></i> Télécharger le clicker (Windows)
             </button>
             <p id="download-count" style="margin-top: 10px; font-size: 1.1em; color: #555;">Nombre de téléchargements : <span id="global-download-count">0</span></p>
+            <!-- Nouveau message d'état pour le téléchargement -->
+            <p id="download-status-message" style="color: red; font-weight: bold; margin-top: 10px;"></p>
             <div class="warning">
                 <ul>
                     <li><strong>Attention :</strong> Le fichier est un exécutable (.exe). Votre navigateur ou votre antivirus peut afficher un avertissement de sécurité. C'est un comportement normal pour les fichiers .exe. Veuillez confirmer le téléchargement si vous êtes sûr de la source et que le fichier est fiable.</li>
@@ -368,7 +370,6 @@
         // Importez les fonctions nécessaires de Firebase
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getFirestore, doc, getDoc, updateDoc, increment, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        // Correction de l'importation: assurez-vous que signInWithCustomToken est importé
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
 
@@ -396,7 +397,6 @@
                 // Si aucune session n'est trouvée, connectez-vous anonymement
                 try {
                     if (initialAuthToken) {
-                        // Utilisez signInWithCustomToken comme il est maintenant importé
                         await signInWithCustomToken(auth, initialAuthToken);
                     } else {
                         await signInAnonymously(auth);
@@ -528,10 +528,10 @@
         const downloadCountElement = document.getElementById('global-download-count');
         const downloadButton = document.getElementById('download-button');
         const DOWNLOAD_DOC_PATH = `/artifacts/${appId}/public/data/globalCounts/downloadCounter`;
+        const downloadStatusMessage = document.getElementById('download-status-message'); // Référence au nouveau message d'état
 
         async function loadGlobalDownloadCount() {
             if (!userId) {
-                // Attendez que l'authentification soit terminée
                 console.warn("User ID non disponible, ne peut pas charger le compteur de téléchargement.");
                 return;
             }
@@ -543,56 +543,65 @@
                     const data = docSnap.data();
                     downloadCountElement.textContent = data.count || 0;
                 } else {
-                    // Si le document n'existe pas, initialisez-le
                     await setDoc(docRef, { count: 0 });
                     downloadCountElement.textContent = 0;
                 }
             } catch (error) {
                 console.error("Erreur lors du chargement du compteur de téléchargement global :", error);
-                downloadCountElement.textContent = "Erreur"; // Afficher une erreur à l'utilisateur
+                downloadCountElement.textContent = "Erreur";
             }
         }
 
         downloadButton.addEventListener('click', async (event) => {
             event.preventDefault(); // Empêche le comportement par défaut du bouton (téléchargement immédiat par un lien)
 
+            // 1. Lance le téléchargement du fichier directement, sans attendre Firebase.
+            console.log("Tentative de téléchargement de : game/clicker.exe");
+            window.location.href = 'game/clicker.exe'; 
+            
+            // 2. Affiche un message immédiat à l'utilisateur sur le début du téléchargement.
+            downloadStatusMessage.style.color = "blue";
+            downloadStatusMessage.textContent = "Le téléchargement devrait commencer sous peu. Si ce n'est pas le cas, veuillez vérifier vos téléchargements.";
+            setTimeout(() => {
+                downloadStatusMessage.textContent = ""; // Effacer le message après un délai
+            }, 7000); // Garder le message visible pendant 7 secondes
+
+            // 3. Procède à la mise à jour du compteur global de manière asynchrone.
             if (!userId) {
-                // Si l'authentification n'est pas encore prête, attendez
-                console.warn("Clique sur le bouton de téléchargement avant que l'ID utilisateur ne soit prêt.");
-                // Vous pouvez ajouter une logique ici pour désactiver le bouton ou afficher un message
-                return;
+                console.warn("User ID non disponible, le compteur global de téléchargement ne sera pas mis à jour pour ce clic.");
+                // Si l'ID utilisateur n'est pas prêt, affiche un message que le compteur n'a pas pu être mis à jour.
+                downloadStatusMessage.style.color = "orange";
+                downloadStatusMessage.textContent = "Le jeu se télécharge, mais le compteur global n'a pas pu être mis à jour (connexion en cours...).";
+                setTimeout(() => {
+                    downloadStatusMessage.textContent = "";
+                }, 7000);
+                return; // Sors de la fonction si l'ID utilisateur n'est pas prêt pour la mise à jour Firestore.
             }
 
             try {
                 const docRef = doc(db, DOWNLOAD_DOC_PATH);
-                // Incrémente le compteur dans Firestore
                 await updateDoc(docRef, {
                     count: increment(1)
                 });
                 
-                // Mettez à jour l'affichage local immédiatement (peut ne pas être la valeur la plus à jour de tous les utilisateurs)
-                // Pour une mise à jour en temps réel sur tous les clients, utilisez onSnapshot (voir suggestions)
+                // Met à jour l'affichage local du compteur si la mise à jour Firestore réussit.
                 const currentCount = parseInt(downloadCountElement.textContent) || 0;
                 downloadCountElement.textContent = currentCount + 1;
-
-                // Lance le téléchargement du fichier directement
-                // ASSUREZ-VOUS que 'clicker.exe' est bien situé dans le dossier 'game' à la racine de votre hébergement.
-                // Par exemple, si votre page index.html est à 'mon-site.com/index.html',
-                // le fichier 'clicker.exe' doit être accessible à 'mon-site.com/game/clicker.exe'.
-                console.log("Tentative de téléchargement de : game/clicker.exe");
-                window.location.href = 'game/clicker.exe'; 
+                console.log("Compteur de téléchargement global incrémenté avec succès.");
 
             } catch (error) {
-                console.error("Erreur lors de l'incrémentation du compteur de téléchargement :", error);
-                // Afficher une erreur à l'utilisateur si l'incrémentation échoue
-                // Utilisez une boîte de dialogue personnalisée au lieu de window.alert
-                showCustomPrompt("Impossible d'incrémenter le compteur de téléchargement. Veuillez réessayer.", () => {});
+                console.error("Erreur lors de l'incrémentation du compteur de téléchargement global :", error);
+                // Si l'incrémentation échoue, affiche un message spécifique pour le compteur.
+                downloadStatusMessage.style.color = "red";
+                downloadStatusMessage.textContent = "Le jeu se télécharge, mais une erreur est survenue lors de la mise à jour du compteur. Veuillez réessayer.";
+                showCustomPrompt("Impossible de mettre à jour le compteur de téléchargement. Veuillez réessayer et vérifier votre connexion.", () => {});
+                setTimeout(() => {
+                    downloadStatusMessage.textContent = "";
+                }, 7000);
             }
         });
 
         // Optionnel : Utiliser onSnapshot pour une mise à jour en temps réel (pour tous les clients)
-        // Ceci est une suggestion pour une fonctionnalité future si vous voulez que tous les visiteurs
-        // voient le compteur mis à jour en direct, même s'ils ne cliquent pas eux-mêmes.
         /*
         onAuthStateChanged(auth, (user) => {
             if (user) {
