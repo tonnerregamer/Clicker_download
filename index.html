@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Télécharger Clicker</title>
+    <title>Télécharger Mon Super Jeu</title>
     <!-- Chargement de la police Inter depuis Google Fonts pour un look moderne -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <!-- Chargement de Font Awesome pour les icônes -->
@@ -136,7 +136,7 @@
             color: white;
             padding: 18px 40px;
             border: none; /* Supprime la bordure par défaut */
-            border-radius: 8px; /* Plus arrondi */
+            border-radius: 8-px; /* Plus arrondi */
             text-decoration: none;
             font-size: 1.5em;
             font-weight: bold;
@@ -280,22 +280,22 @@
 <body>
     <nav class="navbar">
         <!-- Ajout du lien "Accueil" qui pointe vers game_collection_hub/ -->
-        <a href="game_collection_hub.html" style="margin-right: 20px;"><i class="fas fa-home"></i> Accueil</a>
+        <a href="game_collection_hub/" style="margin-right: 20px;"><i class="fas fa-home"></i> Accueil</a>
         <a href="#" id="assistance-link"><i class="fas fa-life-ring"></i> Assistance</a>
     </nav>
 
     <div class="header">
-        <h1>Bienvenue sur la page de téléchargement du Clicker !</h1>
+        <h1>Bienvenue sur la page de téléchargement de Mon Super Jeu !</h1>
         <p>Préparez-vous à une aventure inoubliable !</p>
         <!-- Image principale du jeu sous l'en-tête -->
-        <img src="photo/picture1.png" alt="[Image de Mon Super Jeu]" class="content-image">
+        <img src="https://placehold.co/800x400/FF0000/FFFFFF?text=Mon+Super+Jeu" alt="[Image de Mon Super Jeu]" class="content-image">
     </div>
 
     <div class="main-content">
         <div class="section">
-            <h2>🎮 À propos du Clicker</h2>
+            <h2>🎮 À propos de Mon Super Jeu</h2>
             <p>Mon Super Jeu est un clicker basique mais fun qui peut faire passé le temps avec un system de theme il sera mis a jours régulièrement.</p>
-            <img src="photo/picture2.png" alt="[Image d'Aventure Fantastique]" class="content-image">
+            <img src="https://placehold.co/800x400/0000FF/FFFFFF?text=Aventure+Fantastique" alt="[Image d'Aventure Fantastique]" class="content-image">
             <p>Merci d'avance et si il y a un problème contactez-nous sur Discord : <a href="https://discord.gg/AX2VKE7A" target="_blank">https://discord.gg/AX2VKE7A</a></p>
         </div>
 
@@ -304,11 +304,10 @@
             <button id="download-button" class="download-button">
                 <i class="fas fa-download"></i> Télécharger le clicker (Windows)
             </button>
-            <p id="download-count" style="margin-top: 10px; font-size: 1.1em; color: #555;">Nombre de téléchargements : 0</p>
+            <p id="download-count" style="margin-top: 10px; font-size: 1.1em; color: #555;">Nombre de téléchargements : <span id="global-download-count">0</span></p>
             <div class="warning">
                 <ul>
                     <li><strong>Attention :</strong> Le fichier est un exécutable (.exe). Votre navigateur ou votre antivirus peut afficher un avertissement de sécurité. C'est un comportement normal pour les fichiers .exe. Veuillez confirmer le téléchargement si vous êtes sûr de la source et que le fichier est fiable.</li>
-                     <li><strong>attention temporaire</strong> le (.exe) a un problème ou la console est activé en arrier plan sela ne changera votre gamplay, il sera patch bientot</li>
                 </ul>
             </div>
         </div>
@@ -320,6 +319,7 @@
             <button class="click-button" id="click-button">
                 <i class="fas fa-hand-pointer"></i> Cliquez-moi !
             </button>
+            <img src="https://placehold.co/800x400/00FF00/FFFFFF?text=Jeu+Clicker" alt="[Image d'un Jeu Clicker]" class="content-image" style="margin-top: 20px;">
         </div>
 
         <div class="section">
@@ -364,7 +364,54 @@
         <p>&copy; 2024 Mon Super Jeu. Tous droits réservés.</p>
     </div>
 
-    <script>
+    <script type="module">
+        // Importez les fonctions nécessaires de Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, doc, getDoc, updateDoc, increment, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        // Correction de l'importation: assurez-vous que signInWithCustomToken est importé
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+
+        // Utilisez les variables globales fournies par l'environnement Canvas
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        // Initialisez Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        let userId = null; // Variable pour stocker l'ID utilisateur
+
+
+        // Authentification anonyme pour le compteur de téléchargement
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                userId = user.uid;
+                console.log("Utilisateur connecté :", userId);
+                // Une fois authentifié, chargez le compteur
+                loadGlobalDownloadCount();
+            } else {
+                // Si aucune session n'est trouvée, connectez-vous anonymement
+                try {
+                    if (initialAuthToken) {
+                        // Utilisez signInWithCustomToken comme il est maintenant importé
+                        await signInWithCustomToken(auth, initialAuthToken);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                    console.log("Connexion anonyme réussie.");
+                } catch (error) {
+                    console.error("Erreur de connexion anonyme ou avec token :", error);
+                    // Fallback si l'authentification échoue, générer un userId aléatoire
+                    userId = crypto.randomUUID();
+                    loadGlobalDownloadCount(); // Tentez de charger même sans auth parfaite (peut échouer si les règles Firestore le bloquent)
+                }
+            }
+        });
+
+
         // JavaScript pour le jeu de clicker
         let clicks = 0; // Initialise le compteur de clics
         const clickCountElement = document.getElementById('click-count'); // Récupère l'élément d'affichage du nombre de clics
@@ -381,41 +428,179 @@
         assistanceLink.addEventListener('click', (event) => {
             event.preventDefault(); // Empêche la navigation par défaut
 
-            const userConfirmed = window.prompt("Voulez-vous rejoindre notre serveur Discord pour l'assistance ? Tapez 'oui' pour confirmer.");
-
-            if (userConfirmed && userConfirmed.toLowerCase() === 'oui') {
-                window.open("https://discord.gg/AX2VKE7A", "_blank"); // Ouvre le lien Discord dans un nouvel onglet
-            } else {
-                console.log("Accès Discord annulé par l'utilisateur.");
-            }
+            // Utilisez une boîte de dialogue personnalisée au lieu de window.prompt
+            showCustomPrompt("Voulez-vous rejoindre notre serveur Discord pour l'assistance ? Tapez 'oui' pour confirmer.", (response) => {
+                if (response && response.toLowerCase() === 'oui') {
+                    window.open("https://discord.gg/AX2VKE7A", "_blank"); // Ouvre le lien Discord dans un nouvel onglet
+                } else {
+                    console.log("Accès Discord annulé par l'utilisateur.");
+                }
+            });
         });
 
-        // Compteur de téléchargements
-        let downloads = parseInt(localStorage.getItem('gameDownloads')) || 0; // Charge le nombre de téléchargements depuis le stockage local, ou 0 si inexistant
-        const downloadCountElement = document.getElementById('download-count');
-        const downloadButton = document.getElementById('download-button');
-        
-        // Suppression de l'indicateur "hasDownloadedForCounter" pour compter chaque clic de téléchargement
-        // let hasDownloadedForCounter = localStorage.getItem('hasDownloadedForCounter') === 'true'; 
+        // Boîte de dialogue personnalisée pour remplacer window.prompt
+        function showCustomPrompt(message, callback) {
+            const dialogOverlay = document.createElement('div');
+            dialogOverlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.7);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 1000;
+            `;
 
-        function updateDownloadCount() {
-            downloadCountElement.textContent = `Nombre de téléchargements : ${downloads}`;
+            const dialogBox = document.createElement('div');
+            dialogBox.style.cssText = `
+                background: white;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                text-align: center;
+                font-family: 'Inter', sans-serif;
+            `;
+
+            const messageP = document.createElement('p');
+            messageP.textContent = message;
+            dialogBox.appendChild(messageP);
+
+            const inputField = document.createElement('input');
+            inputField.type = 'text';
+            inputField.style.cssText = `
+                padding: 8px;
+                margin-top: 10px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                width: 80%;
+                max-width: 250px;
+            `;
+            dialogBox.appendChild(inputField);
+
+            const buttonContainer = document.createElement('div');
+            buttonContainer.style.cssText = `
+                margin-top: 20px;
+            `;
+
+            const confirmButton = document.createElement('button');
+            confirmButton.textContent = 'Confirmer';
+            confirmButton.style.cssText = `
+                background-color: #28a745;
+                color: white;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                margin-right: 10px;
+            `;
+            confirmButton.onclick = () => {
+                document.body.removeChild(dialogOverlay);
+                callback(inputField.value);
+            };
+            buttonContainer.appendChild(confirmButton);
+
+            const cancelButton = document.createElement('button');
+            cancelButton.textContent = 'Annuler';
+            cancelButton.style.cssText = `
+                background-color: #dc3545;
+                color: white;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+            `;
+            cancelButton.onclick = () => {
+                document.body.removeChild(dialogOverlay);
+                callback(null); // Retourne null si annulé
+            };
+            buttonContainer.appendChild(cancelButton);
+
+            dialogBox.appendChild(buttonContainer);
+            dialogOverlay.appendChild(dialogBox);
+            document.body.appendChild(dialogOverlay);
+            inputField.focus(); // Met le focus sur le champ de saisie
         }
 
-        // Met à jour le compteur au chargement de la page
-        updateDownloadCount();
+        // Compteur de téléchargements global avec Firestore
+        const downloadCountElement = document.getElementById('global-download-count');
+        const downloadButton = document.getElementById('download-button');
+        const DOWNLOAD_DOC_PATH = `/artifacts/${appId}/public/data/globalCounts/downloadCounter`;
 
-        // Ajoute un écouteur d'événements au bouton de téléchargement
-        downloadButton.addEventListener('click', (event) => {
+        async function loadGlobalDownloadCount() {
+            if (!userId) {
+                // Attendez que l'authentification soit terminée
+                console.warn("User ID non disponible, ne peut pas charger le compteur de téléchargement.");
+                return;
+            }
+            try {
+                const docRef = doc(db, DOWNLOAD_DOC_PATH);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    downloadCountElement.textContent = data.count || 0;
+                } else {
+                    // Si le document n'existe pas, initialisez-le
+                    await setDoc(docRef, { count: 0 });
+                    downloadCountElement.textContent = 0;
+                }
+            } catch (error) {
+                console.error("Erreur lors du chargement du compteur de téléchargement global :", error);
+                downloadCountElement.textContent = "Erreur"; // Afficher une erreur à l'utilisateur
+            }
+        }
+
+        downloadButton.addEventListener('click', async (event) => {
             event.preventDefault(); // Empêche le comportement par défaut du bouton (téléchargement immédiat par un lien)
 
-            // Incrémente le compteur à chaque clic, la limitation "une fois par personne" n'est plus active
-            downloads++; 
-            localStorage.setItem('gameDownloads', downloads); // Sauvegarde le nouveau total global
-            updateDownloadCount(); // Met à jour l'affichage
-            
-            // Lance le téléchargement du fichier directement
-            window.location.href = 'game/clicker.exe'; 
+            if (!userId) {
+                // Si l'authentification n'est pas encore prête, attendez
+                console.warn("Clique sur le bouton de téléchargement avant que l'ID utilisateur ne soit prêt.");
+                // Vous pouvez ajouter une logique ici pour désactiver le bouton ou afficher un message
+                return;
+            }
+
+            try {
+                const docRef = doc(db, DOWNLOAD_DOC_PATH);
+                // Incrémente le compteur dans Firestore
+                await updateDoc(docRef, {
+                    count: increment(1)
+                });
+                
+                // Mettez à jour l'affichage local immédiatement (peut ne pas être la valeur la plus à jour de tous les utilisateurs)
+                // Pour une mise à jour en temps réel sur tous les clients, utilisez onSnapshot (voir suggestions)
+                const currentCount = parseInt(downloadCountElement.textContent) || 0;
+                downloadCountElement.textContent = currentCount + 1;
+
+                // Lance le téléchargement du fichier directement
+                window.location.href = 'game/clicker.exe'; 
+
+            } catch (error) {
+                console.error("Erreur lors de l'incrémentation du compteur de téléchargement :", error);
+                // Afficher une erreur à l'utilisateur si l'incrémentation échoue
+                // Utilisez une boîte de dialogue personnalisée au lieu de window.alert
+                showCustomPrompt("Impossible d'incrémenter le compteur de téléchargement. Veuillez réessayer.", () => {});
+            }
+        });
+        
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const docRef = doc(db, DOWNLOAD_DOC_PATH);
+                onSnapshot(docRef, (docSnap) => {
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        downloadCountElement.textContent = data.count || 0;
+                    } else {
+                        console.log("Le document du compteur n'existe pas encore.");
+                        downloadCountElement.textContent = 0;
+                    }
+                }, (error) => {
+                    console.error("Erreur lors de l'écoute du compteur de téléchargement :", error);
+                });
+            }
         });
     </script>
 </body>
