@@ -105,6 +105,8 @@
             text-align: center;
             border-radius: 25px; /* Plus arrondi */
             margin-top: 50px; /* Marge supérieure augmentée */
+            margin-left: auto; /* Centrage horizontal */
+            margin-right: auto; /* Centrage horizontal */
             box-shadow: 0 15px 40px var(--shadow-strong); /* Ombre plus prononcée */
             position: relative;
             overflow: hidden;
@@ -330,9 +332,7 @@
 
         /* Style du bouton de téléchargement (section download-area) */
         .download-area {
-            background: radial-gradient(circle at top left, var(--accent-turquoise) 0%, transparent 40%),
-                        radial-gradient(circle at bottom right, var(--primary-light) 0%, transparent 50%),
-                        var(--card-bg); /* Nouveau fond pour la section */
+            background: linear-gradient(160deg, #f3e9ff 0%, #d8c2ed 100%); /* Nouveau dégradé harmonieux */
             box-shadow: 0 15px 40px var(--shadow-strong); /* Ombre plus forte */
         }
 
@@ -680,7 +680,7 @@
 
             <!-- Section du Clicker d'entraînement -->
             <section class="section-card clicker-container">
-                <h2>� Échauffez-vous avec notre Clicker d'entraînement !</h2>
+                <h2>👆 Échauffez-vous avec notre Clicker d'entraînement !</h2>
                 <p>Mettez vos doigts à l'épreuve ! Cliquez frénétiquement sur le bouton pour faire grimper votre score. C'est le warm-up parfait avant de vous lancer dans le jeu complet !</p>
                 <div class="clicker-display" id="click-count-display">0</div>
                 <button class="click-button" id="click-button">
