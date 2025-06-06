@@ -3,420 +3,660 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Télécharger Mon Super Jeu</title>
+    <title>Télécharger Mon Super Jeu - Aventure Épique !</title>
     <!-- Chargement de la police Inter depuis Google Fonts pour un look moderne -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <!-- Chargement de Font Awesome pour les icônes -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        /* Variables CSS pour une gestion facile des couleurs */
+        :root {
+            --primary-dark: #4A00B7; /* Violet foncé */
+            --primary-light: #6A1B9A; /* Violet clair */
+            --accent-red: #FF6B6B; /* Rouge corail */
+            --accent-turquoise: #4ECDC4; /* Turquoise */
+            --bg-gradient-start: #F9F0FF; /* Lavande très claire */
+            --bg-gradient-end: #E0BBE4; /* Mauve doux */
+            --text-dark: #333333;
+            --text-light: #ffffff;
+            --card-bg: #ffffff;
+            --shadow-light: rgba(0, 0, 0, 0.1);
+            --shadow-medium: rgba(0, 0, 0, 0.2);
+        }
+
         /* Styles globaux pour le corps de la page */
         body {
-            font-family: 'Inter', sans-serif; /* Utilise la police Inter */
+            font-family: 'Inter', sans-serif;
             line-height: 1.6;
             margin: 0;
             padding: 0;
-            /* Fond dégradé doux pour un aspect moderne */
-            background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
-            color: #333;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            color: var(--text-dark);
             display: flex;
-            flex-direction: column; /* Organise le contenu en colonne */
-            min-height: 100vh; /* Prend toute la hauteur de la fenêtre */
-            align-items: center; /* Centre le contenu horizontalement */
+            flex-direction: column;
+            min-height: 100vh;
+            align-items: center;
+            overflow-x: hidden; /* Empêche le défilement horizontal */
+        }
+
+        /* Conteneur principal pour le contenu */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            box-sizing: border-box;
         }
 
         /* Barre de navigation */
         .navbar {
             width: 100%;
-            background-color: #2c3e50; /* Couleur sombre pour la barre */
+            background-color: var(--primary-dark);
             padding: 15px 0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 15px var(--shadow-medium);
             text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
         .navbar a {
-            color: white;
+            color: var(--text-light);
             text-decoration: none;
             font-weight: 600;
-            margin: 0 20px;
-            font-size: 1.1em;
-            transition: color 0.3s ease;
+            margin: 0 25px;
+            font-size: 1.15em;
+            transition: color 0.3s ease, transform 0.2s ease;
+            position: relative;
         }
         .navbar a:hover {
-            color: #a8dadc; /* Couleur au survol */
+            color: var(--accent-turquoise);
+            transform: translateY(-2px);
         }
-
-        /* Conteneurs principaux : en-tête, contenu, pied de page */
-        .header, .main-content, .footer {
+        .navbar a::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: -5px;
+            width: 0;
+            height: 3px;
+            background-color: var(--accent-red);
+            transition: width 0.3s ease, left 0.3s ease;
+        }
+        .navbar a:hover::after {
             width: 100%;
-            max-width: 960px; /* Largeur maximale pour le contenu */
-            margin: 0 auto; /* Centre le bloc */
-            box-sizing: border-box; /* Inclut le padding dans la largeur/hauteur totale */
-            padding: 20px;
+            left: 0;
         }
 
-        /* Section d'en-tête */
-        .header {
-            background-color: #ffffff;
-            padding: 40px 20px;
+        /* Section Héro (Introduction principale) */
+        .hero-section {
+            background: linear-gradient(45deg, var(--primary-dark) 0%, var(--primary-light) 100%);
+            color: var(--text-light);
+            padding: 80px 20px;
             text-align: center;
-            border-bottom: 1px solid #e0e0e0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            border-radius: 10px; /* Coins arrondis */
-            margin-top: 20px; /* Marge supérieure pour l'en-tête */
+            border-radius: 20px;
+            margin-top: 40px;
+            box-shadow: 0 10px 30px var(--shadow-medium);
+            position: relative;
+            overflow: hidden;
+            max-width: 1000px; /* Limiter la largeur du hero */
         }
-        .header h1 {
-            color: #2c3e50;
-            font-size: 2.8em;
-            margin-bottom: 10px;
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            left: -50px;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, var(--accent-turquoise) 0%, transparent 70%);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: pulse 4s infinite alternate;
         }
-        .header p {
-            color: #666;
-            font-size: 1.1em;
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            bottom: -50px;
+            right: -50px;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, var(--accent-red) 0%, transparent 70%);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: pulse 5s infinite alternate reverse;
         }
-
-        /* Styles pour les images dans le contenu */
-        .content-image {
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-            margin: 20px auto; /* Centre l'image et ajoute de la marge */
-            display: block; /* S'assure que margin auto fonctionne */
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-
-        /* Contenu principal */
-        .main-content {
-            flex-grow: 1; /* Permet au contenu de s'étendre et de pousser le pied de page vers le bas */
-            padding: 40px 20px;
-        }
-
-        /* Style des sections de documentation */
-        .section {
-            background-color: #ffffff;
-            padding: 30px;
-            margin-bottom: 30px;
-            border-radius: 10px; /* Coins arrondis */
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Ombre légère */
+        @keyframes pulse {
+            0% { transform: scale(0.9); opacity: 0.3; }
+            100% { transform: scale(1.1); opacity: 0.5; }
         }
 
-        .section h2 {
-            color: #007bff; /* Couleur bleue pour les titres de section */
-            font-size: 2em;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #e0e0e0; /* Soulignement des titres */
-            padding-bottom: 10px;
-        }
-
-        .section p, .section ul, .section ol {
-            font-size: 1.05em;
-            color: #555;
+        .hero-section h1 {
+            font-size: 3.5em;
             margin-bottom: 15px;
+            text-shadow: 2px 2px 5px var(--shadow-medium);
+            font-weight: 800;
+        }
+        .hero-section p {
+            font-size: 1.3em;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto 30px auto;
+        }
+        .hero-image {
+            max-width: 90%;
+            height: auto;
+            border-radius: 15px;
+            margin-top: 30px;
+            box-shadow: 0 8px 20px var(--shadow-medium);
+            transition: transform 0.3s ease;
+        }
+        .hero-image:hover {
+            transform: scale(1.02);
         }
 
-        .section ul, .section ol {
-            padding-left: 25px; /* Indentation pour les listes */
+        /* Contenu principal flexible */
+        .main-content {
+            flex-grow: 1;
+            padding: 40px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 30px; /* Espace entre les sections */
+            width: 100%;
         }
 
-        .section ul li, .section ol li {
+        /* Style des sections de contenu */
+        .section-card {
+            background-color: var(--card-bg);
+            padding: 40px;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            box-shadow: 0 6px 20px var(--shadow-light);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            max-width: 960px; /* Limiter la largeur des cartes */
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .section-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px var(--shadow-medium);
+        }
+
+        .section-card h2 {
+            color: var(--primary-dark);
+            font-size: 2.5em;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            position: relative;
+            font-weight: 700;
+        }
+        .section-card h2::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background-color: var(--accent-red);
+            border-radius: 2px;
+        }
+
+        .section-card p, .section-card ul, .section-card ol {
+            font-size: 1.1em;
+            color: #555;
+            margin-bottom: 18px;
+            line-height: 1.7;
+        }
+
+        .section-card ul, .section-card ol {
+            padding-left: 25px;
+            text-align: left; /* Alignement des listes */
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .section-card ul li, .section-card ol li {
             margin-bottom: 10px;
         }
 
-        /* Conteneur du bouton de téléchargement pour le centrer */
-        .download-button-container {
-            text-align: center;
-            margin-top: 30px;
-            margin-bottom: 40px;
+        /* Styles pour les images dans les sections */
+        .content-image {
+            max-width: 90%;
+            height: auto;
+            border-radius: 12px;
+            margin: 25px auto;
+            display: block;
+            box-shadow: 0 4px 15px var(--shadow-light);
         }
 
         /* Style du bouton de téléchargement */
         .download-button {
-            display: inline-flex; /* Permet d'aligner l'icône et le texte */
+            display: inline-flex;
             align-items: center;
-            gap: 10px; /* Espace entre l'icône et le texte */
-            background-color: #28a745; /* Vert pour le bouton */
-            color: white;
-            padding: 18px 40px;
-            border: none; /* Supprime la bordure par défaut */
-            border-radius: 8px; /* Plus arrondi */
+            gap: 12px;
+            background: linear-gradient(45deg, var(--accent-red) 0%, #FF8C6B 100%);
+            color: var(--text-light);
+            padding: 20px 45px;
+            border: none;
+            border-radius: 10px;
             text-decoration: none;
-            font-size: 1.5em;
+            font-size: 1.6em;
             font-weight: bold;
-            cursor: pointer; /* Indique que l'élément est cliquable */
-            transition: background-color 0.3s ease, transform 0.2s ease; /* Transitions douces */
-            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3); /* Ombre douce */
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        .download-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: skewX(-30deg);
+            transition: all 0.5s ease;
+            z-index: -1;
+        }
+        .download-button:hover::before {
+            left: 100%;
         }
         .download-button:hover {
-            background-color: #218838; /* Vert plus foncé au survol */
-            transform: translateY(-3px); /* Effet de léger soulèvement */
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 12px 35px rgba(255, 107, 107, 0.6);
         }
         .download-button:active {
-            transform: translateY(0); /* Retour à la position normale au clic */
-            box-shadow: 0 2px 5px rgba(40, 167, 69, 0.3);
+            transform: translateY(0);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
         }
 
-        /* Style du message d'avertissement */
+        /* Compteur de téléchargements */
+        #download-count {
+            margin-top: 15px;
+            font-size: 1.2em;
+            color: var(--primary-dark);
+            font-weight: 600;
+        }
+
+        /* Message d'avertissement */
         .warning {
-            margin-top: 20px;
-            font-size: 0.95em;
+            margin-top: 25px;
+            font-size: 0.98em;
             color: #888;
-            background-color: #fff3cd; /* Fond jaune clair */
-            border-left: 5px solid #ffc107; /* Bordure jaune à gauche */
-            padding: 15px;
-            border-radius: 5px;
+            background-color: #fffacd; /* Jaune clair */
+            border-left: 6px solid #ffc107; /* Bordure jaune */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            text-align: left;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
         }
         .warning strong {
-            color: #da9f04; /* Jaune plus foncé pour le texte important */
+            color: #da9f04;
         }
 
         /* Styles pour le clicker */
         .clicker-container {
-            text-align: center;
-            padding: 30px;
-            background-color: #e0f2f7; /* Fond bleu clair pour le clicker */
-            border-radius: 10px;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.1); /* Ombre intérieure */
+            padding: 40px;
+            background-color: var(--bg-gradient-end); /* Utilisez une couleur de la palette */
+            border-radius: 15px;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.15); /* Ombre intérieure plus prononcée */
             margin-top: 30px;
         }
         .clicker-container h2 {
-            color: #0056b3;
-            margin-bottom: 20px;
-            border-bottom: none; /* Pas de soulignement pour ce titre */
+            color: var(--primary-dark);
+            border-bottom: none;
         }
         .clicker-display {
-            font-size: 3em;
-            font-weight: bold;
-            color: #007bff;
-            margin-bottom: 20px;
-            padding: 10px 20px;
-            background-color: #ffffff;
-            border-radius: 5px;
-            display: inline-block; /* Pour que le padding et la bordure s'appliquent correctement */
-            min-width: 100px; /* Largeur minimale pour éviter le saut lors de l'augmentation du nombre */
+            font-size: 4em;
+            font-weight: 800;
+            color: var(--accent-red);
+            margin-bottom: 25px;
+            padding: 15px 30px;
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            display: inline-block;
+            min-width: 150px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+            transition: color 0.2s ease, transform 0.1s ease;
+        }
+        .clicker-display.animate {
+            transform: scale(1.05);
+            color: var(--accent-turquoise);
         }
         .click-button {
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            background-color: #6f42c1; /* Violet pour le bouton de clic */
-            color: white;
-            padding: 15px 30px;
+            gap: 12px;
+            background: linear-gradient(45deg, var(--accent-turquoise) 0%, #76D7C4 100%);
+            color: var(--text-light);
+            padding: 18px 35px;
             border: none;
-            border-radius: 8px;
-            font-size: 1.3em;
+            border-radius: 10px;
+            font-size: 1.4em;
             font-weight: bold;
             cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-            box-shadow: 0 5px 15px rgba(111, 66, 193, 0.3);
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(78, 205, 196, 0.4);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        .click-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: skewX(-30deg);
+            transition: all 0.5s ease;
+            z-index: -1;
+        }
+        .click-button:hover::before {
+            left: 100%;
         }
         .click-button:hover {
-            background-color: #5a359e;
-            transform: translateY(-2px);
+            background-color: #3aa8a1;
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 12px 35px rgba(78, 205, 196, 0.6);
         }
         .click-button:active {
             transform: translateY(0);
-            box-shadow: 0 2px 5px rgba(111, 66, 193, 0.3);
+            box-shadow: 0 5px 15px rgba(78, 205, 196, 0.3);
         }
 
         /* Section du pied de page */
         .footer {
-            margin-top: 40px;
-            padding: 20px;
+            margin-top: 50px;
+            padding: 30px 20px;
             text-align: center;
             color: #777;
-            font-size: 0.9em;
+            font-size: 1em;
             border-top: 1px solid #e0e0e0;
-            background-color: #ffffff;
-            border-radius: 10px; /* Coins arrondis */
-            margin-bottom: 20px; /* Marge inférieure pour le pied de page */
+            background-color: var(--card-bg);
+            border-radius: 15px 15px 0 0; /* Coins arrondis seulement en haut */
+            box-shadow: 0 -5px 20px var(--shadow-light);
+            width: 100%;
+        }
+        .footer p {
+            margin: 0;
+        }
+        .footer a {
+            color: var(--primary-dark);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+        .footer a:hover {
+            color: var(--accent-red);
+            text-decoration: underline;
         }
 
         /* Adaptations pour les écrans plus petits (responsive design) */
-        @media (max-width: 768px) {
-            .navbar a {
-                margin: 0 10px;
-                font-size: 1em;
+        @media (max-width: 1024px) {
+            .hero-section h1 {
+                font-size: 3em;
             }
-            .header h1 {
-                font-size: 2em;
+            .hero-section p {
+                font-size: 1.2em;
             }
-            .section h2 {
-                font-size: 1.8em;
+            .section-card h2 {
+                font-size: 2.2em;
             }
-            .download-button, .click-button {
-                font-size: 1.3em;
-                padding: 15px 30px;
-            }
-            .header, .main-content, .footer {
-                padding: 15px; /* Réduit le padding général */
-            }
-            .section {
-                padding: 20px; /* Réduit le padding des sections */
+            .download-button {
+                font-size: 1.4em;
+                padding: 18px 40px;
             }
             .clicker-display {
+                font-size: 3.5em;
+            }
+            .click-button {
+                font-size: 1.2em;
+                padding: 16px 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar a {
+                margin: 0 15px;
+                font-size: 1em;
+            }
+            .hero-section {
+                padding: 60px 20px;
+                margin-top: 20px;
+            }
+            .hero-section h1 {
                 font-size: 2.5em;
+            }
+            .hero-section p {
+                font-size: 1.1em;
+            }
+            .section-card {
+                padding: 30px;
+                margin-bottom: 15px;
+            }
+            .section-card h2 {
+                font-size: 2em;
+            }
+            .section-card p, .section-card ul, .section-card ol {
+                font-size: 1em;
+            }
+            .download-button {
+                font-size: 1.2em;
+                padding: 15px 30px;
+            }
+            #download-count {
+                font-size: 1.1em;
+            }
+            .clicker-display {
+                font-size: 3em;
+            }
+            .click-button {
+                font-size: 1.1em;
+                padding: 14px 25px;
+            }
+            .warning {
+                padding: 15px;
             }
         }
 
         @media (max-width: 480px) {
+            .navbar {
+                padding: 10px 0;
+            }
             .navbar a {
-                display: block; /* Chaque lien sur une nouvelle ligne */
+                display: block;
                 margin: 10px 0;
+                font-size: 0.95em;
             }
-            .header h1 {
-                font-size: 1.6em;
+            .hero-section {
+                padding: 40px 15px;
             }
-            .section h2 {
-                font-size: 1.5em;
+            .hero-section h1 {
+                font-size: 2em;
             }
-            .download-button, .click-button {
+            .hero-section p {
+                font-size: 1em;
+            }
+            .section-card {
+                padding: 20px;
+            }
+            .section-card h2 {
+                font-size: 1.8em;
+                margin-bottom: 15px;
+                padding-bottom: 10px;
+            }
+            .download-button {
                 font-size: 1.1em;
                 padding: 12px 25px;
+                gap: 8px;
+            }
+            #download-count {
+                font-size: 1em;
             }
             .clicker-display {
-                font-size: 2em;
+                font-size: 2.5em;
+                padding: 10px 20px;
+            }
+            .click-button {
+                font-size: 1em;
+                padding: 12px 20px;
+                gap: 8px;
+            }
+            .warning {
+                padding: 10px;
+                font-size: 0.9em;
+            }
+            .footer {
+                padding: 20px 15px;
+                font-size: 0.85em;
             }
         }
     </style>
 </head>
 <body>
     <nav class="navbar">
-        <!-- Ajout du lien "Accueil" qui pointe vers game_collection_hub/ -->
-        <a href="game_collection_hub/" style="margin-right: 20px;"><i class="fas fa-home"></i> Accueil</a>
-        <a href="#" id="assistance-link"><i class="fas fa-life-ring"></i> Assistance</a>
+        <a href="game_collection_hub/"><i class="fas fa-home"></i> Accueil</a>
+        <a href="https://discord.gg/AX2VKE7A" target="_blank" rel="noopener noreferrer"><i class="fas fa-life-ring"></i> Assistance Discord</a>
     </nav>
 
-    <div class="header">
-        <h1>Bienvenue sur la page de téléchargement de Mon Super Jeu !</h1>
-        <p>Préparez-vous à une aventure inoubliable !</p>
-        <!-- Image principale du jeu sous l'en-tête -->
-        <img src="photo/picture1.png" alt="[Image de Mon Super Jeu]" class="content-image">
-    </div>
+    <div class="container">
+        <!-- Section Héro avec une image plus percutante et un titre accrocheur -->
+        <section class="hero-section">
+            <h1>Bienvenue dans l'univers de Mon Super Jeu !</h1>
+            <p>Plongez dans une aventure captivante et découvrez un monde de défis amusants. Téléchargez dès maintenant et rejoignez l'aventure !</p>
+            <img src="https://placehold.co/900x450/4A00B7/FFFFFF?text=Mon+Super+Jeu+-+Écran+Titre" alt="[Image de Mon Super Jeu Écran Titre]" class="hero-image">
+        </section>
 
-    <div class="main-content">
-        <div class="section">
-            <h2>🎮 À propos de Mon Super Jeu</h2>
-            <p>Mon Super Jeu est un clicker basique mais fun qui peut faire passé le temps avec un system de theme il sera mis a jours régulièrement.</p>
-            <img src="photo/picture2.png" alt="[Image d'Aventure Fantastique]" class="content-image">
-            <p>Merci d'avance et si il y a un problème contactez-nous sur Discord : <a href="https://discord.gg/AX2VKE7A" target="_blank">https://discord.gg/AX2VKE7A</a></p>
-        </div>
+        <main class="main-content">
+            <!-- Section "À propos" avec un design de carte -->
+            <section class="section-card">
+                <h2>🎮 À propos de Mon Super Jeu</h2>
+                <p>Mon Super Jeu est un <strong>clicker addictif et évolutif</strong>, conçu pour vous faire passer le temps de la manière la plus divertissante possible. Avec des mises à jour régulières et de nouveaux thèmes, l'ennui n'est pas permis !</p>
+                <img src="https://placehold.co/800x400/4ECDC4/333333?text=Aventure+Fantastique" alt="[Image d'Aventure Fantastique]" class="content-image">
+                <p>Nous sommes toujours là pour vous aider ! Si vous rencontrez le moindre problème ou avez des suggestions, n'hésitez pas à nous contacter sur notre serveur Discord. Votre avis compte !</p>
+                <a href="https://discord.gg/AX2VKE7A" target="_blank" rel="noopener noreferrer" style="color: var(--primary-dark); text-decoration: underline; font-weight: 600;">Rejoignez-nous sur Discord !</a>
+            </section>
 
-        <div class="section download-button-container">
-            <h2>⬇️ Téléchargez le jeu maintenant !</h2>
-            <button id="download-button" class="download-button">
-                <i class="fas fa-download"></i> Télécharger le clicker (Windows)
-            </button>
-            <p id="download-count" style="margin-top: 10px; font-size: 1.1em; color: #555;">Nombre de téléchargements : 0</p>
-            <div class="warning">
+            <!-- Section de téléchargement stylisée -->
+            <section class="section-card download-area">
+                <h2>⬇️ Prêt à l'action ? Téléchargez le jeu !</h2>
+                <p>Cliquez sur le bouton ci-dessous pour télécharger la dernière version de notre clicker. L'installation est rapide et vous serez prêt à jouer en un rien de temps !</p>
+                <button id="download-button" class="download-button">
+                    <i class="fas fa-cloud-download-alt"></i> Télécharger le Clicker (Windows)
+                </button>
+                <p id="download-count">Nombre de téléchargements : 0</p>
+                <div class="warning">
+                    <i class="fas fa-exclamation-triangle" style="color: #ffc107; margin-right: 10px;"></i>
+                    <ul>
+                        <li><strong>Avertissement important :</strong> Ce fichier est un exécutable (.exe). Il est possible que votre navigateur ou votre antivirus affiche un avertissement de sécurité. C'est une procédure standard pour ce type de fichier. Si vous avez confiance en la source (nous !), veuillez confirmer le téléchargement.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Section du Clicker d'entraînement -->
+            <section class="section-card clicker-container">
+                <h2>� Échauffez-vous avec notre Clicker d'entraînement !</h2>
+                <p>Mettez vos doigts à l'épreuve ! Cliquez frénétiquement sur le bouton pour faire grimper votre score. C'est le warm-up parfait avant de vous lancer dans le jeu complet !</p>
+                <div class="clicker-display" id="click-count-display">0</div>
+                <button class="click-button" id="click-button">
+                    <i class="fas fa-hand-pointer"></i> Cliquez ici !
+                </button>
+                <img src="https://placehold.co/600x300/E0BBE4/4A00B7?text=Mini+Jeu+Clicker" alt="[Image d'un Jeu Clicker]" class="content-image" style="margin-top: 20px;">
+            </section>
+
+            <!-- Section "Guide d'Installation" -->
+            <section class="section-card">
+                <h2>⚙️ Guide d'Installation Facile</h2>
+                <p>Commencez à jouer en quelques étapes simples :</p>
+                <ol>
+                    <li><i class="fas fa-file-download" style="color: var(--accent-turquoise); margin-right: 10px;"></i><strong>Téléchargez le Fichier :</strong> Cliquez sur le bouton "Télécharger le Clicker" ci-dessus. Le fichier <code>.exe</code> se retrouvera dans votre dossier "Téléchargements".</li>
+                    <li><i class="fas fa-folder-open" style="color: var(--accent-turquoise); margin-right: 10px;"></i><strong>Organisez et Lancez :</strong> Créez un nouveau dossier, placez <code>clicker.exe</code> à l'intérieur, puis double-cliquez dessus pour lancer le jeu. C'est tout !</li>
+                </ol>
+                <p>Pour une expérience optimale, assurez-vous de vérifier la <a href="#requirements" style="color: var(--primary-dark); text-decoration: underline;">configuration minimale requise</a>.</p>
+            </section>
+
+            <!-- Section "Configuration Requise" -->
+            <section class="section-card" id="requirements">
+                <h2>💻 Configuration Requise (Minimum)</h2>
+                <p>Voici ce dont vous aurez besoin pour profiter pleinement de Mon Super Jeu :</p>
                 <ul>
-                    <li><strong>Attention :</strong> Le fichier est un exécutable (.exe). Votre navigateur ou votre antivirus peut afficher un avertissement de sécurité. C'est un comportement normal pour les fichiers .exe. Veuillez confirmer le téléchargement si vous êtes sûr de la source et que le fichier est fiable.</li>
+                    <li><i class="fab fa-windows" style="color: var(--accent-red); margin-right: 10px;"></i><strong>Système d'exploitation :</strong> Windows 7 / 8 / 10 / 11 (64-bit)</li>
+                    <li><i class="fas fa-microchip" style="color: var(--accent-red); margin-right: 10px;"></i><strong>Processeur :</strong> Intel Core i3 ou équivalent</li>
+                    <li><i class="fas fa-memory" style="color: var(--accent-red); margin-right: 10px;"></i><strong>Mémoire vive (RAM) :</strong> 4 Go</li>
+                    <li><i class="fas fa-server" style="color: var(--accent-red); margin-right: 10px;"></i><strong>Espace Disque :</strong> 2 Go d'espace libre</li>
+                    <li><i class="fas fa-gem" style="color: var(--accent-red); margin-right: 10px;"></i><strong>DirectX :</strong> Version 11</li>
                 </ul>
-            </div>
-        </div>
+                <p>Pas besoin d'Internet pour jouer, le plaisir est garanti hors ligne !</p>
+            </section>
 
-        <div class="section clicker-container">
-            <h2>👆 Entraînez-vous avec notre Clicker !</h2>
-            <p>Cliquez autant de fois que possible sur le bouton ci-dessous pour voir votre score augmenter. Un petit échauffement avant l'aventure !</p>
-            <div class="clicker-display" id="click-count">0</div>
-            <button class="click-button" id="click-button">
-                <i class="fas fa-hand-pointer"></i> Cliquez-moi !
-            </button>
-            <img src="" alt="[Image d'un Jeu Clicker]" class="content-image" style="margin-top: 20px;">
-        </div>
-
-        <div class="section">
-            <h2>⚙️ Guide d'Installation</h2>
-            <p>Suivez ces étapes simples pour installer et commencer à jouer à Mon Super Jeu :</p>
-            <ol>
-                <li><strong>Télécharger le Fichier :</strong> Cliquez sur le bouton "Télécharger le clicker" ci-dessus. Le fichier `.exe` sera téléchargé sur votre ordinateur (généralement dans le dossier "Téléchargements").</li>
-                <li><strong>Placer le Fichier :</strong> Pour pouvoir l'exécuter sans problème, ajoutez un nouveau dossier et insérez `clicker.exe` dedans. Ensuite, cliquez dessus pour jouer.</li>
-            </ol>
-            <p>Si vous rencontrez des problèmes, assurez-vous que votre système répond aux <a href="#requirements">exigences minimales</a> ou consultez la section de dépannage.</p>
-        </div>
-
-        <div class="section" id="requirements">
-            <h2>💻 Configuration Requise (Minimum)</h2>
-            <p>Pour une expérience de jeu fluide, nous recommandons la configuration minimale suivante :</p>
-            <ul>
-                <li><strong>Système d'exploitation :</strong> Windows 7 / 8 / 10 / 11 (64-bit)</li>
-                <li><strong>Processeur :</strong> Intel Core i3 ou équivalent</li>
-                <li><strong>Mémoire vive (RAM) :</strong> 4 Go</li>
-                <li><strong>Carte Graphique :</strong> Compatible DirectX 11 (ex: NVIDIA GeForce GTX 460 / AMD Radeon HD 5850 ou équivalent)</li>
-                <li><strong>Espace Disque :</strong> 2 Go d'espace libre</li>
-                <li><strong>DirectX :</strong> Version 11</li>
-            </ul>
-            <p>Aucun besoin d'internet pour le moment.</p>
-        </div>
-
-        <div class="section">
-            <h2>🛠️ Dépannage Courant</h2>
-            <p>Si vous rencontrez des difficultés lors du téléchargement ou de l'installation, voici quelques solutions :</p>
-            <ul>
-                <li><strong>Avertissement du Navigateur :</strong> Si votre navigateur bloque le téléchargement, cherchez une option "Conserver" ou "Télécharger quand même" dans la notification.</li>
-                <li><strong>Antivirus :</strong> Votre logiciel antivirus pourrait mettre en quarantaine le fichier. Ajoutez le jeu à la liste d'exceptions de votre antivirus si vous lui faites confiance.</li>
-                <li><strong>Espace Disque :</strong> Assurez-vous d'avoir suffisamment d'espace libre sur votre disque dur avant de lancer l'installation.</li>
-                <li><strong>Mises à jour Windows :</strong> Assurez-vous que votre système d'exploitation est à jour.</li>
-                <li><strong>Pilotes Graphiques :</strong> Vérifiez que vos pilotes de carte graphique sont à jour.</li>
-            </ul>
-            <p>Si le problème persiste, n'hésitez pas à nous contacter via notre page de support (vous pouvez ajouter un lien ici).</p>
-        </div>
+            <!-- Section "Dépannage Courant" -->
+            <section class="section-card">
+                <h2>🛠️ Dépannage Courant</h2>
+                <p>Rencontrez un problème ? Voici quelques solutions rapides :</p>
+                <ul>
+                    <li><i class="fas fa-ban" style="color: var(--primary-dark); margin-right: 10px;"></i><strong>Avertissement Navigateur :</strong> Si le téléchargement est bloqué, cherchez "Conserver" ou "Télécharger quand même" dans la notification de votre navigateur.</li>
+                    <li><i class="fas fa-shield-alt" style="color: var(--primary-dark); margin-right: 10px;"></i><strong>Antivirus :</strong> Votre antivirus pourrait mettre le fichier en quarantaine. Ajoutez le jeu à la liste d'exceptions si vous nous faites confiance.</li>
+                    <li><i class="fas fa-hdd" style="color: var(--primary-dark); margin-right: 10px;"></i><strong>Espace Disque :</strong> Assurez-vous d'avoir suffisamment d'espace libre.</li>
+                    <li><i class="fas fa-sync-alt" style="color: var(--primary-dark); margin-right: 10px;"></i><strong>Mises à jour/Pilotes :</strong> Gardez votre OS et vos pilotes graphiques à jour.</li>
+                </ul>
+                <p>Si le problème persiste, notre équipe d'assistance Discord est là pour vous aider !</p>
+            </section>
+        </main>
     </div>
 
-    <div class="footer">
+    <footer class="footer">
         <p>&copy; 2024 Mon Super Jeu. Tous droits réservés.</p>
-    </div>
+        <p>Conçu avec <i class="fas fa-heart" style="color: var(--accent-red);"></i> pour les joueurs passionnés.</p>
+    </footer>
 
     <script>
         // JavaScript pour le jeu de clicker
-        let clicks = 0; // Initialise le compteur de clics
-        const clickCountElement = document.getElementById('click-count'); // Récupère l'élément d'affichage du nombre de clics
-        const clickButton = document.getElementById('click-button'); // Récupère le bouton de clic
+        let clicks = 0;
+        const clickCountDisplayElement = document.getElementById('click-count-display');
+        const clickButton = document.getElementById('click-button');
 
-        // Ajoute un écouteur d'événements 'click' au bouton
         clickButton.addEventListener('click', () => {
-            clicks++; // Incrémente le compteur de clics
-            clickCountElement.textContent = clicks; // Met à jour le texte affiché avec le nouveau nombre de clics
-        });
-
-        // JavaScript pour le lien d'assistance
-        const assistanceLink = document.getElementById('assistance-link');
-        assistanceLink.addEventListener('click', (event) => {
-            event.preventDefault(); // Empêche la navigation par défaut
-
-            const userConfirmed = window.prompt("Voulez-vous rejoindre notre serveur Discord pour l'assistance ? Tapez 'oui' pour confirmer.");
-
-            if (userConfirmed && userConfirmed.toLowerCase() === 'oui') {
-                window.open("https://discord.gg/AX2VKE7A", "_blank"); // Ouvre le lien Discord dans un nouvel onglet
-            } else {
-                console.log("Accès Discord annulé par l'utilisateur.");
-            }
+            clicks++;
+            clickCountDisplayElement.textContent = clicks;
+            clickCountDisplayElement.classList.add('animate'); // Ajoute la classe pour l'animation
+            setTimeout(() => {
+                clickCountDisplayElement.classList.remove('animate'); // Retire la classe après l'animation
+            }, 200); // Durée de l'animation en ms
         });
 
         // Compteur de téléchargements
-        let downloads = parseInt(localStorage.getItem('gameDownloads')) || 0; // Charge le nombre de téléchargements depuis le stockage local, ou 0 si inexistant
+        let downloads = parseInt(localStorage.getItem('gameDownloads')) || 0;
         const downloadCountElement = document.getElementById('download-count');
         const downloadButton = document.getElementById('download-button');
         
-        // Suppression de l'indicateur "hasDownloadedForCounter" pour compter chaque clic de téléchargement
-        // let hasDownloadedForCounter = localStorage.getItem('hasDownloadedForCounter') === 'true'; 
-
         function updateDownloadCount() {
             downloadCountElement.textContent = `Nombre de téléchargements : ${downloads}`;
         }
 
-        // Met à jour le compteur au chargement de la page
         updateDownloadCount();
 
-        // Ajoute un écouteur d'événements au bouton de téléchargement
         downloadButton.addEventListener('click', (event) => {
-            event.preventDefault(); // Empêche le comportement par défaut du bouton (téléchargement immédiat par un lien)
+            event.preventDefault(); // Empêche le comportement par défaut
 
-            // Incrémente le compteur à chaque clic, la limitation "une fois par personne" n'est plus active
-            downloads++; 
-            localStorage.setItem('gameDownloads', downloads); // Sauvegarde le nouveau total global
-            updateDownloadCount(); // Met à jour l'affichage
+            downloads++;
+            localStorage.setItem('gameDownloads', downloads);
+            updateDownloadCount();
             
-            // Lance le téléchargement du fichier directement
+            // Lance le téléchargement du fichier
             window.location.href = 'game/clicker.exe'; 
         });
     </script>
 </body>
 </html>
+�
