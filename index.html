@@ -393,7 +393,8 @@
 
 
         // Initialisation de Firebase
-        if (firebaseConfig && firebaseConfig.projectId) {
+        // Assurez-vous que firebaseConfig est un objet valide et contient un projectId
+        if (firebaseConfig && typeof firebaseConfig === 'object' && firebaseConfig.projectId && typeof firebaseConfig.projectId === 'string' && firebaseConfig.projectId.length > 0) {
             try {
                 app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
@@ -426,18 +427,18 @@
                     }
                 });
             } catch (initError) {
-                console.error("Erreur lors de l'initialisation de Firebase :", initError.message);
+                console.error("Erreur lors de l'initialisation de Firebase (initializeApp) :", initError.message);
                 downloadStatusMessage.style.color = "red";
-                downloadStatusMessage.textContent = "Erreur: Le compteur de téléchargement global n'est pas disponible (problème de configuration Firebase).";
+                downloadStatusMessage.textContent = "Erreur: Le compteur de téléchargement global n'est pas disponible (problème lors de l'initialisation de Firebase).";
                 downloadCountElement.textContent = "N/A";
-                userId = crypto.randomUUID(); // Toujours avoir un userId même si Firebase échoue
+                userId = crypto.randomUUID();
             }
         } else {
-            console.error("Initialisation Firebase ignorée : 'projectId' non trouvé dans firebaseConfig. Le compteur global de téléchargement ne sera pas disponible.");
+            console.error("Initialisation Firebase ignorée : 'projectId' non trouvé ou non valide dans firebaseConfig.");
             downloadStatusMessage.style.color = "red";
             downloadStatusMessage.textContent = "Le compteur de téléchargement global n'est pas disponible (configuration Firebase incomplète).";
             downloadCountElement.textContent = "N/A";
-            userId = crypto.randomUUID(); // Toujours avoir un userId
+            userId = crypto.randomUUID();
         }
 
 
