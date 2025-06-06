@@ -401,6 +401,9 @@
         let downloads = parseInt(localStorage.getItem('gameDownloads')) || 0; // Charge le nombre de téléchargements depuis le stockage local, ou 0 si inexistant
         const downloadCountElement = document.getElementById('download-count');
         const downloadButton = document.getElementById('download-button');
+        
+        // Indicateur pour savoir si l'utilisateur a déjà téléchargé (pour ne compter qu'une fois)
+        let hasDownloaded = localStorage.getItem('hasDownloaded') === 'true'; 
 
         function updateDownloadCount() {
             downloadCountElement.textContent = `Nombre de téléchargements : ${downloads}`;
@@ -410,13 +413,24 @@
         updateDownloadCount();
 
         // Ajoute un écouteur d'événements au bouton de téléchargement
-        downloadButton.addEventListener('click', () => {
-            downloads++; // Incrémente le compteur
-            localStorage.setItem('gameDownloads', downloads); // Sauvegarde dans le stockage local
-            updateDownloadCount(); // Met à jour l'affichage
+        downloadButton.addEventListener('click', (event) => { // Ajout de 'event' ici
+            event.preventDefault(); // Empêche le comportement par défaut du bouton
 
-            // Lance le téléchargement du fichier
-            window.location.href = 'game/clicker.exe';
+            const userConfirmed = window.prompt("Voulez-vous télécharger le jeu ? Tapez 'oui' pour confirmer.");
+
+            if (userConfirmed && userConfirmed.toLowerCase() === 'oui') {
+                if (!hasDownloaded) { // Seulement si l'utilisateur n'a pas déjà téléchargé
+                    downloads++; // Incrémente le compteur
+                    localStorage.setItem('gameDownloads', downloads); // Sauvegarde le nouveau total
+                    localStorage.setItem('hasDownloaded', 'true'); // Marque comme téléchargé pour cet utilisateur
+                    hasDownloaded = true; // Met à jour la variable en mémoire
+                    updateDownloadCount(); // Met à jour l'affichage
+                }
+                // Lance le téléchargement du fichier, même si déjà compté pour cette session
+                window.location.href = 'game/clicker.exe'; 
+            } else {
+                console.log("Téléchargement annulé par l'utilisateur.");
+            }
         });
     </script>
 </body>
