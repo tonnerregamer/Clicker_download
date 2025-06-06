@@ -304,9 +304,355 @@
             <button id="download-button" class="download-button">
                 <i class="fas fa-download"></i> Télécharger le clicker (Windows)
             </button>
-            <p id="download-count" style="margin-top: 10px; font-size: 1.1em; color: #555;">Nombre de téléchargements : <span id="global-download-count">0</span></p>
-            <!-- Nouveau message d'état pour le téléchargement -->
-            <p id="download-status-message" style="color: red; font-weight: bold; margin-top: 10px;"></p>
+            <!-- Ces éléments ont été retirés car ils étaient liés au compteur global -->
+            <!-- <p id="download-count" style="margin-top: 10px; font-size: 1.1em; color: #555;">Nombre de téléchargements : <span id="global-download-count">0</span></p> -->
+            <!-- <p id="download-status-message" style="color: red; font-weight: bold; margin-top: 10px;"></p> -->
+            <div class="warning">
+                <ul>
+                    <li><strong>Attention :</strong> Le fichier est un exécutable (.exe). Votre navigateur ou votre antivirus peut afficher un avertissement de sécurité. C'est un comportement normal pour les fichiers .exe. Veuillez confirmer le téléchargement si vous êtes sûr de la source et que le fichier est fiable.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section clicker-container">
+            <h2>👆 Entraînez-vous avec notre Clicker !</h2>
+            <p>Cliquez autant de fois que possible sur le bouton ci-dessous pour voir votre score augmenter. Un petit échauffement avant l'aventure !</p>
+            <div class="clicker-display" id="click-count">0</div>
+            <button class="click-button" id="click-button">
+                <i class="fas fa-hand-pointer"></i> Cliquez-moi !
+            </button>
+            <img src="" alt="[Image d'un Jeu Clicker]" class="content-image" style="margin-top: 20px;">
+        </div>
+
+        <div class="section">
+            <h2>⚙️ Guide d'Installation</h2>
+            <p>Suivez ces étapes simples pour installer et commencer à jouer à Mon Super Jeu :</p>
+            <ol>
+                <li><strong>Télécharger le Fichier :</strong> Cliquez sur le bouton "Télécharger le clicker" ci-dessus. Le fichier `.exe` sera téléchargé sur votre ordinateur (généralement dans le dossier "Téléchargements").</li>
+                <li><strong>Placer le Fichier :</strong> Pour pouvoir l'exécuter sans problème, ajoutez un nouveau dossier et insérez `clicker.exe` dedans. Ensuite, cliquez dessus pour jouer.</li>
+            </ol>
+            <p>Si vous rencontrez des problèmes, assurez-vous que votre système répond aux <a href="#requirements">exigences minimales</a> ou consultez la section de dépannage.</p>
+        </div>
+
+        <div class="section" id="requirements">
+            <h2>💻 Configuration Requise (Minimum)</h2>
+            <p>Pour une expérience de jeu fluide, nous recommandons la configuration minimale suivante :</p>
+            <ul>
+                <li><strong>Système d'exploitation :</strong> Windows 7 / 8 / 10 / 11 (64-bit)</li>
+                <li><strong>Processeur :</strong> Intel Core i3 ou équivalent</li>
+                <li><strong>Mémoire vive (RAM) :
+J'ai bien noté votre demande. Puisque nous mettons le compteur de côté pour le moment, j'ai supprimé toute la logique et les éléments HTML associés à Firebase et au compteur de téléchargements. La page se concentrera désormais uniquement sur la présentation de votre jeu et le lien de téléchargement.
+
+Voici le fichier `index.html` mis à jour, sans le compteur global :
+
+
+```html
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Télécharger Mon Super Jeu</title>
+    <!-- Chargement de la police Inter depuis Google Fonts pour un look moderne -->
+    <link href="[https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap](https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap)" rel="stylesheet">
+    <!-- Chargement de Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="[https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css](https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css)">
+    <style>
+        /* Styles globaux pour le corps de la page */
+        body {
+            font-family: 'Inter', sans-serif; /* Utilise la police Inter */
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            /* Fond dégradé doux pour un aspect moderne */
+            background: linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%);
+            color: #333;
+            display: flex;
+            flex-direction: column; /* Organise le contenu en colonne */
+            min-height: 100vh; /* Prend toute la hauteur de la fenêtre */
+            align-items: center; /* Centre le contenu horizontalement */
+        }
+
+        /* Barre de navigation */
+        .navbar {
+            width: 100%;
+            background-color: #2c3e50; /* Couleur sombre pour la barre */
+            padding: 15px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 0 20px;
+            font-size: 1.1em;
+            transition: color 0.3s ease;
+        }
+        .navbar a:hover {
+            color: #a8dadc; /* Couleur au survol */
+        }
+
+        /* Conteneurs principaux : en-tête, contenu, pied de page */
+        .header, .main-content, .footer {
+            width: 100%;
+            max-width: 960px; /* Largeur maximale pour le contenu */
+            margin: 0 auto; /* Centre le bloc */
+            box-sizing: border-box; /* Inclut le padding dans la largeur/hauteur totale */
+            padding: 20px;
+        }
+
+        /* Section d'en-tête */
+        .header {
+            background-color: #ffffff;
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom: 1px solid #e0e0e0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-radius: 10px; /* Coins arrondis */
+            margin-top: 20px; /* Marge supérieure pour l'en-tête */
+        }
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.8em;
+            margin-bottom: 10px;
+        }
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        /* Styles pour les images dans le contenu */
+        .content-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 20px auto; /* Centre l'image et ajoute de la marge */
+            display: block; /* S'assure que margin auto fonctionne */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        /* Contenu principal */
+        .main-content {
+            flex-grow: 1; /* Permet au contenu de s'étendre et de pousser le pied de page vers le bas */
+            padding: 40px 20px;
+        }
+
+        /* Style des sections de documentation */
+        .section {
+            background-color: #ffffff;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 10px; /* Coins arrondis */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Ombre légère */
+        }
+
+        .section h2 {
+            color: #007bff; /* Couleur bleue pour les titres de section */
+            font-size: 2em;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0; /* Soulignement des titres */
+            padding-bottom: 10px;
+        }
+
+        .section p, .section ul, .section ol {
+            font-size: 1.05em;
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+        .section ul, .section ol {
+            padding-left: 25px; /* Indentation pour les listes */
+        }
+
+        .section ul li, .section ol li {
+            margin-bottom: 10px;
+        }
+
+        /* Conteneur du bouton de téléchargement pour le centrer */
+        .download-button-container {
+            text-align: center;
+            margin-top: 30px;
+            margin-bottom: 40px;
+        }
+
+        /* Style du bouton de téléchargement */
+        .download-button {
+            display: inline-flex; /* Permet d'aligner l'icône et le texte */
+            align-items: center;
+            gap: 10px; /* Espace entre l'icône et le texte */
+            background-color: #28a745; /* Vert pour le bouton */
+            color: white;
+            padding: 18px 40px;
+            border: none; /* Supprime la bordure par défaut */
+            border-radius: 8-px; /* Plus arrondi */
+            text-decoration: none;
+            font-size: 1.5em;
+            font-weight: bold;
+            cursor: pointer; /* Indique que l'élément est cliquable */
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+        .download-button:hover {
+            background-color: #218838;
+            transform: translateY(-3px);
+        }
+        .download-button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(40, 167, 69, 0.3);
+        }
+
+        /* Style du message d'avertissement */
+        .warning {
+            margin-top: 20px;
+            font-size: 0.95em;
+            color: #888;
+            background-color: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .warning strong {
+            color: #da9f04;
+        }
+
+        /* Styles pour le clicker */
+        .clicker-container {
+            text-align: center;
+            padding: 30px;
+            background-color: #e0f2f7;
+            border-radius: 10px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+            margin-top: 30px;
+        }
+        .clicker-container h2 {
+            color: #0056b3;
+            margin-bottom: 20px;
+            border-bottom: none;
+        }
+        .clicker-display {
+            font-size: 3em;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background-color: #ffffff;
+            border-radius: 5px;
+            display: inline-block;
+            min-width: 100px;
+        }
+        .click-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background-color: #6f42c1;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.3em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 5px 15px rgba(111, 66, 193, 0.3);
+        }
+        .click-button:hover {
+            background-color: #5a359e;
+            transform: translateY(-2px);
+        }
+        .click-button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 5px rgba(111, 66, 193, 0.3);
+        }
+
+        /* Section du pied de page */
+        .footer {
+            margin-top: 40px;
+            padding: 20px;
+            text-align: center;
+            color: #777;
+            font-size: 0.9em;
+            border-top: 1px solid #e0e0e0;
+            background-color: #ffffff;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        /* Adaptations pour les écrans plus petits (responsive design) */
+        @media (max-width: 768px) {
+            .navbar a {
+                margin: 0 10px;
+                font-size: 1em;
+            }
+            .header h1 {
+                font-size: 2em;
+            }
+            .section h2 {
+                font-size: 1.8em;
+            }
+            .download-button, .click-button {
+                font-size: 1.3em;
+                padding: 15px 30px;
+            }
+            .header, .main-content, .footer {
+                padding: 15px;
+            }
+            .section {
+                padding: 20px;
+            }
+            .clicker-display {
+                font-size: 2.5em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar a {
+                display: block;
+                margin: 10px 0;
+            }
+            .header h1 {
+                font-size: 1.6em;
+            }
+            .section h2 {
+                font-size: 1.5em;
+            }
+            .download-button, .click-button {
+                font-size: 1.1em;
+                padding: 12px 25px;
+            }
+            .clicker-display {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <!-- Ajout du lien "Accueil" qui pointe vers game_collection_hub/ -->
+        <a href="game_collection_hub/" style="margin-right: 20px;"><i class="fas fa-home"></i> Accueil</a>
+        <a href="#" id="assistance-link"><i class="fas fa-life-ring"></i> Assistance</a>
+    </nav>
+
+    <div class="header">
+        <h1>Bienvenue sur la page de téléchargement de Mon Super Jeu !</h1>
+        <p>Préparez-vous à une aventure inoubliable !</p>
+        <!-- Image principale du jeu sous l'en-tête -->
+        <img src="photo/picture1.png" alt="[Image de Mon Super Jeu]" class="content-image">
+    </div>
+
+    <div class="main-content">
+        <div class="section">
+            <h2>🎮 À propos de Mon Super Jeu</h2>
+            <p>Mon Super Jeu est un clicker basique mais fun qui peut faire passé le temps avec un system de theme il sera mis a jours régulièrement.</p>
+            <img src="photo/picture2.png" alt="[Image d'Aventure Fantastique]" class="content-image">
+            <p>Merci d'avance et si il y a un problème contactez-nous sur Discord : <a href="[https://discord.gg/AX2VKE7A](https://discord.gg/AX2VKE7A)" target="_blank">[https://discord.gg/AX2VKE7A](https://discord.gg/AX2VKE7A)</a></p>
+        </div>
+
+        <div class="section download-button-container">
+            <h2>⬇️ Téléchargez le jeu maintenant !</h2>
+            <button id="download-button" class="download-button">
+                <i class="fas fa-download"></i> Télécharger le clicker (Windows)
+            </button>
             <div class="warning">
                 <ul>
                     <li><strong>Attention :</strong> Le fichier est un exécutable (.exe). Votre navigateur ou votre antivirus peut afficher un avertissement de sécurité. C'est un comportement normal pour les fichiers .exe. Veuillez confirmer le téléchargement si vous êtes sûr de la source et que le fichier est fiable.</li>
@@ -360,28 +706,6 @@
             </ul>
             <p>Si le problème persiste, n'hésitez pas à nous contacter via notre page de support (vous pouvez ajouter un lien ici).</p>
         </div>
-
-        <div class="section">
-            <h2>⚙️ Guide d'Installation de Firebase (pour le compteur global)</h2>
-            <p>Si le compteur de téléchargement global ne fonctionne pas, veuillez vérifier les points suivants dans votre projet Firebase :</p>
-            <ol>
-                <li><strong>Projet Firebase :</strong> Assurez-vous d'avoir créé un projet sur <a href="https://console.firebase.google.com/" target="_blank">console.firebase.google.com</a>.</li>
-                <li><strong>Firestore Database :</strong> Activez "Firestore Database" dans votre projet Firebase (choisissez le mode "Démarrer en mode production" ou "Démarrer en mode test" pour des tests faciles).</li>
-                <li><strong>Authentification Anonyme :</strong> Activez la méthode "Anonyme" dans "Authentification" -> "Méthode de connexion" de votre projet Firebase.</li>
-                <li><strong>Règles de Sécurité Firestore :</strong> Mettez à jour vos règles de sécurité Firestore pour permettre la lecture et l'écriture dans la collection `globalCounts`. Allez dans "Firestore Database" -> "Règles" et utilisez les règles suivantes :
-                    <pre><code>rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /artifacts/{appId}/public/data/globalCounts/{document=**} {
-      allow read, write: if request.auth != null;
-    }
-  }
-}</code></pre>
-                </li>
-                <li><strong>Configuration Fournie :</strong> Assurez-vous que les variables de configuration Firebase (spécifiquement le `projectId`) sont correctement transmises par l'environnement où cette page est hébergée. En Canvas, cela est géré par les variables globales `__app_id` et `__firebase_config`. Si votre `__firebase_config` ne contient pas le `projectId` (par exemple, si c'est `"{}"`), le compteur ne fonctionnera pas.</li>
-            </ol>
-            <p style="color: red; font-weight: bold;">Ceci est crucial pour le fonctionnement du compteur global !</p>
-        </div>
     </div>
 
     <div class="footer">
@@ -389,99 +713,9 @@ service cloud.firestore {
     </div>
 
     <script type="module">
-        // Importez les fonctions nécessaires de Firebase
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, doc, getDoc, updateDoc, increment, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-
-
-        // Utilisez les variables globales fournies par l'environnement Canvas
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfigRaw = typeof __firebase_config !== 'undefined' ? __firebase_config : '{}';
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-        
-        // Définition de DOWNLOAD_DOC_PATH ici pour qu'il soit disponible globalement
-        const DOWNLOAD_DOC_PATH = `/artifacts/${appId}/public/data/globalCounts/downloadCounter`;
-
-        // Initialisez Firebase
-        let app = null;
-        let db = null;
-        let auth = null;
-        let userId = null; // Variable pour stocker l'ID utilisateur
-        
-        // Eléments UI pour les messages d'état
-        const downloadCountElement = document.getElementById('global-download-count');
-        const downloadStatusMessage = document.getElementById('download-status-message');
-
-        let firebaseConfig = {};
-        try {
-            firebaseConfig = JSON.parse(firebaseConfigRaw);
-            console.log('firebaseConfig parsed:', firebaseConfig);
-            console.log('firebaseConfig.projectId:', firebaseConfig ? firebaseConfig.projectId : 'null/undefined');
-        } catch (e) {
-            console.error("Erreur de parsing de firebaseConfig :", e);
-            downloadStatusMessage.style.color = "red";
-            downloadStatusMessage.textContent = "Erreur: La configuration Firebase est invalide (problème de format JSON).";
-            downloadCountElement.textContent = "N/A";
-            userId = crypto.randomUUID();
-            // Important: if parsing fails, ensure projectId is empty to trigger the next 'else' block for proper messaging.
-            firebaseConfig.projectId = '';
-        }
-
-
-        // Initialisation de Firebase
-        // Assurez-vous que firebaseConfig est un objet valide et contient un projectId
-        if (firebaseConfig && typeof firebaseConfig === 'object' && firebaseConfig.projectId && typeof firebaseConfig.projectId === 'string' && firebaseConfig.projectId.length > 0) {
-            try {
-                app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                auth = getAuth(app);
-                console.log("Firebase initialisé avec succès.");
-
-                // Authentification anonyme pour le compteur de téléchargement
-                onAuthStateChanged(auth, async (user) => {
-                    if (user) {
-                        userId = user.uid;
-                        console.log("Utilisateur connecté :", userId);
-                        loadGlobalDownloadCount();
-                    } else {
-                        try {
-                            if (initialAuthToken) {
-                                await signInWithCustomToken(auth, initialAuthToken);
-                            } else {
-                                await signInAnonymously(auth);
-                            }
-                            console.log("Connexion anonyme réussie.");
-                            userId = auth.currentUser?.uid || crypto.randomUUID(); // S'assurer que userId est défini
-                            loadGlobalDownloadCount();
-                        } catch (error) {
-                            console.error("Erreur de connexion anonyme ou avec token :", error);
-                            userId = crypto.randomUUID(); // Fallback si l'authentification échoue
-                            downloadStatusMessage.style.color = "orange";
-                            downloadStatusMessage.textContent = "Le compteur global pourrait ne pas fonctionner (problème d'authentification Firebase).";
-                            setTimeout(() => { downloadStatusMessage.textContent = ""; }, 7000);
-                        }
-                    }
-                });
-            } catch (initError) {
-                console.error("Erreur lors de l'initialisation de Firebase (initializeApp) :", initError.message);
-                downloadStatusMessage.style.color = "red";
-                downloadStatusMessage.textContent = "Erreur: Le compteur de téléchargement global n'est pas disponible (problème lors de l'initialisation de Firebase).";
-                downloadCountElement.textContent = "N/A";
-                userId = crypto.randomUUID();
-            }
-        } else {
-            console.error("Initialisation Firebase ignorée : 'projectId' non trouvé ou non valide dans firebaseConfig.");
-            downloadStatusMessage.style.color = "red";
-            downloadStatusMessage.textContent = "Le compteur de téléchargement global n'est pas disponible (configuration Firebase incomplète).";
-            downloadCountElement.textContent = "N/A";
-            userId = crypto.randomUUID();
-        }
-
-
-        // JavaScript pour le jeu de clicker (inchangé, fonctionne indépendamment)
+        // JavaScript pour le jeu de clicker
         let clicks = 0;
-        const clickCountElementClicker = document.getElementById('click-count'); // Renommé pour éviter conflit
+        const clickCountElementClicker = document.getElementById('click-count');
         const clickButton = document.getElementById('click-button');
 
         clickButton.addEventListener('click', () => {
@@ -489,20 +723,20 @@ service cloud.firestore {
             clickCountElementClicker.textContent = clicks;
         });
 
-        // JavaScript pour le lien d'assistance (inchangé, fonctionne indépendamment)
+        // JavaScript pour le lien d'assistance
         const assistanceLink = document.getElementById('assistance-link');
         assistanceLink.addEventListener('click', (event) => {
             event.preventDefault();
             showCustomPrompt("Voulez-vous rejoindre notre serveur Discord pour l'assistance ? Tapez 'oui' pour confirmer.", (response) => {
                 if (response && response.toLowerCase() === 'oui') {
-                    window.open("https://discord.gg/AX2VKE7A", "_blank");
+                    window.open("[https://discord.gg/AX2VKE7A](https://discord.gg/AX2VKE7A)", "_blank");
                 } else {
                     console.log("Accès Discord annulé par l'utilisateur.");
                 }
             });
         });
 
-        // Boîte de dialogue personnalisée (inchangée, fonctionne indépendamment)
+        // Boîte de dialogue personnalisée
         function showCustomPrompt(message, callback) {
             const dialogOverlay = document.createElement('div');
             dialogOverlay.style.cssText = `
@@ -588,95 +822,14 @@ service cloud.firestore {
             inputField.focus();
         }
 
-        // Fonction pour charger le compteur global
-        async function loadGlobalDownloadCount() {
-            if (!db || !auth || !userId) {
-                console.warn("Firebase ou User ID non disponible, ne peut pas charger le compteur de téléchargement.");
-                return;
-            }
-            try {
-                const docRef = doc(db, DOWNLOAD_DOC_PATH);
-                const docSnap = await getDoc(docRef);
-
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    downloadCountElement.textContent = data.count || 0;
-                } else {
-                    await setDoc(docRef, { count: 0 });
-                    downloadCountElement.textContent = 0;
-                }
-            } catch (error) {
-                console.error("Erreur lors du chargement du compteur de téléchargement global :", error);
-                downloadCountElement.textContent = "Erreur";
-                downloadStatusMessage.style.color = "red";
-                downloadStatusMessage.textContent = "Impossible de charger le compteur de téléchargement (problème de lecture Firebase).";
-                setTimeout(() => { downloadStatusMessage.textContent = ""; }, 7000);
-            }
-        }
-
         // Écouteur d'événement pour le bouton de téléchargement
-        const downloadButton = document.getElementById('download-button'); // Déplacé ici pour être sûr
-        downloadButton.addEventListener('click', async (event) => {
-            event.preventDefault();
+        const downloadButton = document.getElementById('download-button');
+        downloadButton.addEventListener('click', (event) => {
+            event.preventDefault(); // Empêche le comportement par défaut du bouton
 
-            // Étape 1: Tenter IMMÉDIATEMENT le téléchargement du fichier.
             console.log("Tentative de déclenchement du téléchargement : game/clicker.exe");
-            window.location.href = 'game/clicker.exe'; 
-            
-            // Étape 2: Afficher un message d'état à l'utilisateur.
-            downloadStatusMessage.style.color = "blue";
-            downloadStatusMessage.textContent = "Le téléchargement devrait commencer sous peu. Si ce n'est pas le cas, veuillez vérifier vos téléchargements ou la disponibilité du fichier.";
-            setTimeout(() => {
-                downloadStatusMessage.textContent = "";
-            }, 7000);
-
-            // Étape 3: Mettre à jour le compteur global via Firebase de manière ASYNCHRONE.
-            if (db && auth && userId) {
-                try {
-                    const docRef = doc(db, DOWNLOAD_DOC_PATH);
-                    await updateDoc(docRef, {
-                        count: increment(1)
-                    });
-                    
-                    const currentCount = parseInt(downloadCountElement.textContent) || 0;
-                    downloadCountElement.textContent = currentCount + 1;
-                    console.log("Compteur de téléchargement global incrémenté avec succès.");
-
-                } catch (error) {
-                    console.error("Erreur lors de l'incrémentation du compteur de téléchargement global :", error);
-                    downloadStatusMessage.style.color = "red";
-                    downloadStatusMessage.textContent = "Le jeu se télécharge, mais une erreur est survenue lors de la mise à jour du compteur global (permissions ou connexion Firebase).";
-                    // Utilisez la boîte de dialogue personnalisée pour l'erreur Firebase
-                    showCustomPrompt("Une erreur est survenue lors de la mise à jour du compteur de téléchargement. Vérifiez les règles Firebase.", () => {});
-                    setTimeout(() => { downloadStatusMessage.textContent = ""; }, 7000);
-                }
-            } else {
-                console.warn("Firebase non initialisé ou User ID non disponible. Le compteur global de téléchargement ne sera pas mis à jour pour ce clic.");
-                downloadStatusMessage.style.color = "orange";
-                downloadStatusMessage.textContent = "Le jeu se télécharge, mais le compteur global n'a pas pu être mis à jour (service Firebase indisponible).";
-                setTimeout(() => { downloadStatusMessage.textContent = ""; }, 7000);
-            }
+            window.location.href = 'game/clicker.exe';
         });
-
-        // Optionnel : Utiliser onSnapshot pour une mise à jour en temps réel (pour tous les clients)
-        /*
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                const docRef = doc(db, DOWNLOAD_DOC_PATH);
-                onSnapshot(docRef, (docSnap) => {
-                    if (docSnap.exists()) {
-                        const data = docSnap.data();
-                        downloadCountElement.textContent = data.count || 0;
-                    } else {
-                        console.log("Le document du compteur n'existe pas encore.");
-                        downloadCountElement.textContent = 0;
-                    }
-                }, (error) => {
-                    console.error("Erreur lors de l'écoute du compteur de téléchargement :", error);
-                });
-            }
-        });
-        */
     </script>
 </body>
 </html>
