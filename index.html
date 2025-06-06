@@ -141,15 +141,15 @@
             font-size: 1.5em;
             font-weight: bold;
             cursor: pointer; /* Indique que l'élément est cliquable */
-            transition: background-color 0.3s ease, transform 0.2s ease; /* Transitions douces */
-            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3); /* Ombre douce */
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
         }
         .download-button:hover {
-            background-color: #218838; /* Vert plus foncé au survol */
-            transform: translateY(-3px); /* Effet de léger soulèvement */
+            background-color: #218838;
+            transform: translateY(-3px);
         }
         .download-button:active {
-            transform: translateY(0); /* Retour à la position normale au clic */
+            transform: translateY(0);
             box-shadow: 0 2px 5px rgba(40, 167, 69, 0.3);
         }
 
@@ -158,28 +158,28 @@
             margin-top: 20px;
             font-size: 0.95em;
             color: #888;
-            background-color: #fff3cd; /* Fond jaune clair */
-            border-left: 5px solid #ffc107; /* Bordure jaune à gauche */
+            background-color: #fff3cd;
+            border-left: 5px solid #ffc107;
             padding: 15px;
             border-radius: 5px;
         }
         .warning strong {
-            color: #da9f04; /* Jaune plus foncé pour le texte important */
+            color: #da9f04;
         }
 
         /* Styles pour le clicker */
         .clicker-container {
             text-align: center;
             padding: 30px;
-            background-color: #e0f2f7; /* Fond bleu clair pour le clicker */
+            background-color: #e0f2f7;
             border-radius: 10px;
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.1); /* Ombre intérieure */
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
             margin-top: 30px;
         }
         .clicker-container h2 {
             color: #0056b3;
             margin-bottom: 20px;
-            border-bottom: none; /* Pas de soulignement pour ce titre */
+            border-bottom: none;
         }
         .clicker-display {
             font-size: 3em;
@@ -189,14 +189,14 @@
             padding: 10px 20px;
             background-color: #ffffff;
             border-radius: 5px;
-            display: inline-block; /* Pour que le padding et la bordure s'appliquent correctement */
-            min-width: 100px; /* Largeur minimale pour éviter le saut lors de l'augmentation du nombre */
+            display: inline-block;
+            min-width: 100px;
         }
         .click-button {
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            background-color: #6f42c1; /* Violet pour le bouton de clic */
+            background-color: #6f42c1;
             color: white;
             padding: 15px 30px;
             border: none;
@@ -225,8 +225,8 @@
             font-size: 0.9em;
             border-top: 1px solid #e0e0e0;
             background-color: #ffffff;
-            border-radius: 10px; /* Coins arrondis */
-            margin-bottom: 20px; /* Marge inférieure pour le pied de page */
+            border-radius: 10px;
+            margin-bottom: 20px;
         }
 
         /* Adaptations pour les écrans plus petits (responsive design) */
@@ -246,10 +246,10 @@
                 padding: 15px 30px;
             }
             .header, .main-content, .footer {
-                padding: 15px; /* Réduit le padding général */
+                padding: 15px;
             }
             .section {
-                padding: 20px; /* Réduit le padding des sections */
+                padding: 20px;
             }
             .clicker-display {
                 font-size: 2.5em;
@@ -258,7 +258,7 @@
 
         @media (max-width: 480px) {
             .navbar a {
-                display: block; /* Chaque lien sur une nouvelle ligne */
+                display: block;
                 margin: 10px 0;
             }
             .header h1 {
@@ -377,68 +377,94 @@
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
         const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        
+        // Définition de DOWNLOAD_DOC_PATH ici pour qu'il soit disponible globalement
+        const DOWNLOAD_DOC_PATH = `/artifacts/${appId}/public/data/globalCounts/downloadCounter`;
 
         // Initialisez Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-
+        let app = null;
+        let db = null;
+        let auth = null;
         let userId = null; // Variable pour stocker l'ID utilisateur
+        
+        // Eléments UI pour les messages d'état
+        const downloadCountElement = document.getElementById('global-download-count');
+        const downloadStatusMessage = document.getElementById('download-status-message');
 
 
-        // Authentification anonyme pour le compteur de téléchargement
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                userId = user.uid;
-                console.log("Utilisateur connecté :", userId);
-                // Une fois authentifié, chargez le compteur
-                loadGlobalDownloadCount();
-            } else {
-                // Si aucune session n'est trouvée, connectez-vous anonymement
-                try {
-                    if (initialAuthToken) {
-                        await signInWithCustomToken(auth, initialAuthToken);
+        // Initialisation de Firebase
+        if (firebaseConfig && firebaseConfig.projectId) {
+            try {
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                console.log("Firebase initialisé avec succès.");
+
+                // Authentification anonyme pour le compteur de téléchargement
+                onAuthStateChanged(auth, async (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        console.log("Utilisateur connecté :", userId);
+                        loadGlobalDownloadCount();
                     } else {
-                        await signInAnonymously(auth);
+                        try {
+                            if (initialAuthToken) {
+                                await signInWithCustomToken(auth, initialAuthToken);
+                            } else {
+                                await signInAnonymously(auth);
+                            }
+                            console.log("Connexion anonyme réussie.");
+                            userId = auth.currentUser?.uid || crypto.randomUUID(); // S'assurer que userId est défini
+                            loadGlobalDownloadCount();
+                        } catch (error) {
+                            console.error("Erreur de connexion anonyme ou avec token :", error);
+                            userId = crypto.randomUUID(); // Fallback si l'authentification échoue
+                            downloadStatusMessage.style.color = "orange";
+                            downloadStatusMessage.textContent = "Le compteur global pourrait ne pas fonctionner (problème d'authentification Firebase).";
+                            setTimeout(() => { downloadStatusMessage.textContent = ""; }, 7000);
+                        }
                     }
-                    console.log("Connexion anonyme réussie.");
-                } catch (error) {
-                    console.error("Erreur de connexion anonyme ou avec token :", error);
-                    // Fallback si l'authentification échoue, générer un userId aléatoire
-                    userId = crypto.randomUUID();
-                    loadGlobalDownloadCount(); // Tentez de charger même sans auth parfaite (peut échouer si les règles Firestore le bloquent)
-                }
+                });
+            } catch (initError) {
+                console.error("Erreur lors de l'initialisation de Firebase :", initError.message);
+                downloadStatusMessage.style.color = "red";
+                downloadStatusMessage.textContent = "Erreur: Le compteur de téléchargement global n'est pas disponible (problème de configuration Firebase).";
+                downloadCountElement.textContent = "N/A";
+                userId = crypto.randomUUID(); // Toujours avoir un userId même si Firebase échoue
             }
-        });
+        } else {
+            console.error("Initialisation Firebase ignorée : 'projectId' non trouvé dans firebaseConfig. Le compteur global de téléchargement ne sera pas disponible.");
+            downloadStatusMessage.style.color = "red";
+            downloadStatusMessage.textContent = "Le compteur de téléchargement global n'est pas disponible (configuration Firebase incomplète).";
+            downloadCountElement.textContent = "N/A";
+            userId = crypto.randomUUID(); // Toujours avoir un userId
+        }
 
 
-        // JavaScript pour le jeu de clicker
-        let clicks = 0; // Initialise le compteur de clics
-        const clickCountElement = document.getElementById('click-count'); // Récupère l'élément d'affichage du nombre de clics
-        const clickButton = document.getElementById('click-button'); // Récupère le bouton de clic
+        // JavaScript pour le jeu de clicker (inchangé, fonctionne indépendamment)
+        let clicks = 0;
+        const clickCountElementClicker = document.getElementById('click-count'); // Renommé pour éviter conflit
+        const clickButton = document.getElementById('click-button');
 
-        // Ajoute un écouteur d'événements 'click' au bouton
         clickButton.addEventListener('click', () => {
-            clicks++; // Incrémente le compteur de clics
-            clickCountElement.textContent = clicks; // Met à jour le texte affiché avec le nouveau nombre de clics
+            clicks++;
+            clickCountElementClicker.textContent = clicks;
         });
 
-        // JavaScript pour le lien d'assistance
+        // JavaScript pour le lien d'assistance (inchangé, fonctionne indépendamment)
         const assistanceLink = document.getElementById('assistance-link');
         assistanceLink.addEventListener('click', (event) => {
-            event.preventDefault(); // Empêche la navigation par défaut
-
-            // Utilisez une boîte de dialogue personnalisée au lieu de window.prompt
+            event.preventDefault();
             showCustomPrompt("Voulez-vous rejoindre notre serveur Discord pour l'assistance ? Tapez 'oui' pour confirmer.", (response) => {
                 if (response && response.toLowerCase() === 'oui') {
-                    window.open("https://discord.gg/AX2VKE7A", "_blank"); // Ouvre le lien Discord dans un nouvel onglet
+                    window.open("https://discord.gg/AX2VKE7A", "_blank");
                 } else {
                     console.log("Accès Discord annulé par l'utilisateur.");
                 }
             });
         });
 
-        // Boîte de dialogue personnalisée pour remplacer window.prompt
+        // Boîte de dialogue personnalisée (inchangée, fonctionne indépendamment)
         function showCustomPrompt(message, callback) {
             const dialogOverlay = document.createElement('div');
             dialogOverlay.style.cssText = `
@@ -514,25 +540,20 @@
             `;
             cancelButton.onclick = () => {
                 document.body.removeChild(dialogOverlay);
-                callback(null); // Retourne null si annulé
+                callback(null);
             };
             buttonContainer.appendChild(cancelButton);
 
             dialogBox.appendChild(buttonContainer);
             dialogOverlay.appendChild(dialogBox);
             document.body.appendChild(dialogOverlay);
-            inputField.focus(); // Met le focus sur le champ de saisie
+            inputField.focus();
         }
 
-        // Compteur de téléchargements global avec Firestore
-        const downloadCountElement = document.getElementById('global-download-count');
-        const downloadButton = document.getElementById('download-button');
-        const DOWNLOAD_DOC_PATH = `/artifacts/${appId}/public/data/globalCounts/downloadCounter`;
-        const downloadStatusMessage = document.getElementById('download-status-message'); // Référence au nouveau message d'état
-
+        // Fonction pour charger le compteur global
         async function loadGlobalDownloadCount() {
-            if (!userId) {
-                console.warn("User ID non disponible, ne peut pas charger le compteur de téléchargement.");
+            if (!db || !auth || !userId) {
+                console.warn("Firebase ou User ID non disponible, ne peut pas charger le compteur de téléchargement.");
                 return;
             }
             try {
@@ -549,55 +570,53 @@
             } catch (error) {
                 console.error("Erreur lors du chargement du compteur de téléchargement global :", error);
                 downloadCountElement.textContent = "Erreur";
+                downloadStatusMessage.style.color = "red";
+                downloadStatusMessage.textContent = "Impossible de charger le compteur de téléchargement (problème de lecture Firebase).";
+                setTimeout(() => { downloadStatusMessage.textContent = ""; }, 7000);
             }
         }
 
+        // Écouteur d'événement pour le bouton de téléchargement
+        const downloadButton = document.getElementById('download-button'); // Déplacé ici pour être sûr
         downloadButton.addEventListener('click', async (event) => {
-            event.preventDefault(); // Empêche le comportement par défaut du bouton (téléchargement immédiat par un lien)
+            event.preventDefault();
 
-            // 1. Lance le téléchargement du fichier directement, sans attendre Firebase.
-            console.log("Tentative de téléchargement de : game/clicker.exe");
+            // Étape 1: Tenter IMMÉDIATEMENT le téléchargement du fichier.
+            console.log("Tentative de déclenchement du téléchargement : game/clicker.exe");
             window.location.href = 'game/clicker.exe'; 
             
-            // 2. Affiche un message immédiat à l'utilisateur sur le début du téléchargement.
+            // Étape 2: Afficher un message d'état à l'utilisateur.
             downloadStatusMessage.style.color = "blue";
-            downloadStatusMessage.textContent = "Le téléchargement devrait commencer sous peu. Si ce n'est pas le cas, veuillez vérifier vos téléchargements.";
+            downloadStatusMessage.textContent = "Le téléchargement devrait commencer sous peu. Si ce n'est pas le cas, veuillez vérifier vos téléchargements ou la disponibilité du fichier.";
             setTimeout(() => {
-                downloadStatusMessage.textContent = ""; // Effacer le message après un délai
-            }, 7000); // Garder le message visible pendant 7 secondes
+                downloadStatusMessage.textContent = "";
+            }, 7000);
 
-            // 3. Procède à la mise à jour du compteur global de manière asynchrone.
-            if (!userId) {
-                console.warn("User ID non disponible, le compteur global de téléchargement ne sera pas mis à jour pour ce clic.");
-                // Si l'ID utilisateur n'est pas prêt, affiche un message que le compteur n'a pas pu être mis à jour.
+            // Étape 3: Mettre à jour le compteur global via Firebase de manière ASYNCHRONE.
+            if (db && auth && userId) {
+                try {
+                    const docRef = doc(db, DOWNLOAD_DOC_PATH);
+                    await updateDoc(docRef, {
+                        count: increment(1)
+                    });
+                    
+                    const currentCount = parseInt(downloadCountElement.textContent) || 0;
+                    downloadCountElement.textContent = currentCount + 1;
+                    console.log("Compteur de téléchargement global incrémenté avec succès.");
+
+                } catch (error) {
+                    console.error("Erreur lors de l'incrémentation du compteur de téléchargement global :", error);
+                    downloadStatusMessage.style.color = "red";
+                    downloadStatusMessage.textContent = "Le jeu se télécharge, mais une erreur est survenue lors de la mise à jour du compteur global (permissions ou connexion Firebase).";
+                    // Utilisez la boîte de dialogue personnalisée pour l'erreur Firebase
+                    showCustomPrompt("Une erreur est survenue lors de la mise à jour du compteur de téléchargement. Vérifiez les règles Firebase.", () => {});
+                    setTimeout(() => { downloadStatusMessage.textContent = ""; }, 7000);
+                }
+            } else {
+                console.warn("Firebase non initialisé ou User ID non disponible. Le compteur global de téléchargement ne sera pas mis à jour pour ce clic.");
                 downloadStatusMessage.style.color = "orange";
-                downloadStatusMessage.textContent = "Le jeu se télécharge, mais le compteur global n'a pas pu être mis à jour (connexion en cours...).";
-                setTimeout(() => {
-                    downloadStatusMessage.textContent = "";
-                }, 7000);
-                return; // Sors de la fonction si l'ID utilisateur n'est pas prêt pour la mise à jour Firestore.
-            }
-
-            try {
-                const docRef = doc(db, DOWNLOAD_DOC_PATH);
-                await updateDoc(docRef, {
-                    count: increment(1)
-                });
-                
-                // Met à jour l'affichage local du compteur si la mise à jour Firestore réussit.
-                const currentCount = parseInt(downloadCountElement.textContent) || 0;
-                downloadCountElement.textContent = currentCount + 1;
-                console.log("Compteur de téléchargement global incrémenté avec succès.");
-
-            } catch (error) {
-                console.error("Erreur lors de l'incrémentation du compteur de téléchargement global :", error);
-                // Si l'incrémentation échoue, affiche un message spécifique pour le compteur.
-                downloadStatusMessage.style.color = "red";
-                downloadStatusMessage.textContent = "Le jeu se télécharge, mais une erreur est survenue lors de la mise à jour du compteur. Veuillez réessayer.";
-                showCustomPrompt("Impossible de mettre à jour le compteur de téléchargement. Veuillez réessayer et vérifier votre connexion.", () => {});
-                setTimeout(() => {
-                    downloadStatusMessage.textContent = "";
-                }, 7000);
+                downloadStatusMessage.textContent = "Le jeu se télécharge, mais le compteur global n'a pas pu être mis à jour (service Firebase indisponible).";
+                setTimeout(() => { downloadStatusMessage.textContent = ""; }, 7000);
             }
         });
 
