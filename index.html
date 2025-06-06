@@ -360,6 +360,28 @@
             </ul>
             <p>Si le problème persiste, n'hésitez pas à nous contacter via notre page de support (vous pouvez ajouter un lien ici).</p>
         </div>
+
+        <div class="section">
+            <h2>⚙️ Guide d'Installation de Firebase (pour le compteur global)</h2>
+            <p>Si le compteur de téléchargement global ne fonctionne pas, veuillez vérifier les points suivants dans votre projet Firebase :</p>
+            <ol>
+                <li><strong>Projet Firebase :</strong> Assurez-vous d'avoir créé un projet sur <a href="https://console.firebase.google.com/" target="_blank">console.firebase.google.com</a>.</li>
+                <li><strong>Firestore Database :</strong> Activez "Firestore Database" dans votre projet Firebase (choisissez le mode "Démarrer en mode production" ou "Démarrer en mode test" pour des tests faciles).</li>
+                <li><strong>Authentification Anonyme :</strong> Activez la méthode "Anonyme" dans "Authentification" -> "Méthode de connexion" de votre projet Firebase.</li>
+                <li><strong>Règles de Sécurité Firestore :</strong> Mettez à jour vos règles de sécurité Firestore pour permettre la lecture et l'écriture dans la collection `globalCounts`. Allez dans "Firestore Database" -> "Règles" et utilisez les règles suivantes :
+                    <pre><code>rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /artifacts/{appId}/public/data/globalCounts/{document=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}</code></pre>
+                </li>
+                <li><strong>Configuration Fournie :</strong> Assurez-vous que les variables de configuration Firebase (spécifiquement le `projectId`) sont correctement transmises par l'environnement où cette page est hébergée. En Canvas, cela est géré par les variables globales `__app_id` et `__firebase_config`. Si votre `__firebase_config` ne contient pas le `projectId` (par exemple, si c'est `"{}"`), le compteur ne fonctionnera pas.</li>
+            </ol>
+            <p style="color: red; font-weight: bold;">Ceci est crucial pour le fonctionnement du compteur global !</p>
+        </div>
     </div>
 
     <div class="footer">
@@ -375,7 +397,7 @@
 
         // Utilisez les variables globales fournies par l'environnement Canvas
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const firebaseConfigRaw = typeof __firebase_config !== 'undefined' ? __firebase_config : '{}';
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
         
         // Définition de DOWNLOAD_DOC_PATH ici pour qu'il soit disponible globalement
@@ -390,6 +412,21 @@
         // Eléments UI pour les messages d'état
         const downloadCountElement = document.getElementById('global-download-count');
         const downloadStatusMessage = document.getElementById('download-status-message');
+
+        let firebaseConfig = {};
+        try {
+            firebaseConfig = JSON.parse(firebaseConfigRaw);
+            console.log('firebaseConfig parsed:', firebaseConfig);
+            console.log('firebaseConfig.projectId:', firebaseConfig ? firebaseConfig.projectId : 'null/undefined');
+        } catch (e) {
+            console.error("Erreur de parsing de firebaseConfig :", e);
+            downloadStatusMessage.style.color = "red";
+            downloadStatusMessage.textContent = "Erreur: La configuration Firebase est invalide (problème de format JSON).";
+            downloadCountElement.textContent = "N/A";
+            userId = crypto.randomUUID();
+            // Important: if parsing fails, ensure projectId is empty to trigger the next 'else' block for proper messaging.
+            firebaseConfig.projectId = '';
+        }
 
 
         // Initialisation de Firebase
