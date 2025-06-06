@@ -275,6 +275,66 @@
                 font-size: 2em;
             }
         }
+
+        /* Styles pour la boîte de dialogue modale */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .modal-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            transform: translateY(-20px);
+            transition: transform 0.3s ease;
+        }
+        .modal-overlay.visible .modal-content {
+            transform: translateY(0);
+        }
+        .modal-content p {
+            margin-bottom: 20px;
+            font-size: 1.1em;
+            color: #333;
+        }
+        .modal-buttons button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 0 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.2s ease;
+        }
+        .modal-buttons button:hover {
+            background-color: #0056b3;
+        }
+        .modal-buttons button.cancel {
+            background-color: #6c757d;
+        }
+        .modal-buttons button.cancel:hover {
+            background-color: #5a6268;
+        }
     </style>
 </head>
 <body>
@@ -300,12 +360,10 @@
 
         <div class="section download-button-container">
             <h2>⬇️ Téléchargez le jeu maintenant !</h2>
-            <!-- IMPORTANT : Remplacez "clicker.exe" par le nom exact de votre fichier exécutable -->
             <button id="download-button" class="download-button">
                 <i class="fas fa-download"></i> Télécharger le clicker (Windows)
             </button>
             <p id="download-count" style="margin-top: 10px; font-size: 1.1em; color: #555;">Nombre de téléchargements : 0</p>
-            <button id="reset-downloads" style="margin-top: 5px; padding: 5px 10px; background-color: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer;">Réinitialiser le compteur (Local)</button>
             <div class="warning">
                 <ul>
                     <li><strong>Attention :</strong> Le fichier est un exécutable (.exe). Votre navigateur ou votre antivirus peut afficher un avertissement de sécurité. C'est un comportement normal pour les fichiers .exe. Veuillez confirmer le téléchargement si vous êtes sûr de la source et que le fichier est fiable.</li>
@@ -365,6 +423,17 @@
         <p>&copy; 2024 Mon Super Jeu. Tous droits réservés.</p>
     </div>
 
+    <!-- Boîte de dialogue modale personnalisée -->
+    <div id="custom-modal-overlay" class="modal-overlay">
+        <div class="modal-content">
+            <p id="modal-message"></p>
+            <div class="modal-buttons">
+                <button id="modal-confirm-btn">Confirmer</button>
+                <button id="modal-cancel-btn" class="cancel">Annuler</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // JavaScript pour le jeu de clicker
         let clicks = 0; // Initialise le compteur de clics
@@ -382,22 +451,53 @@
         assistanceLink.addEventListener('click', (event) => {
             event.preventDefault(); // Empêche la navigation par défaut
 
-            const userConfirmed = window.prompt("Voulez-vous rejoindre notre serveur Discord pour l'assistance ? Tapez 'oui' pour confirmer.");
+            showCustomModal("Voulez-vous rejoindre notre serveur Discord pour l'assistance ?", (confirmed) => {
+                if (confirmed) {
+                    window.open("https://discord.gg/AX2VKE7A", "_blank"); // Ouvre le lien Discord dans un nouvel onglet
+                } else {
+                    console.log("Accès Discord annulé par l'utilisateur.");
+                }
+            });
+        });
 
-            if (userConfirmed && userConfirmed.toLowerCase() === 'oui') {
-                window.open("https://discord.gg/AX2VKE7A", "_blank"); // Ouvre le lien Discord dans un nouvel onglet
-            } else {
-                console.log("Accès Discord annulé par l'utilisateur.");
+        // --- Logique de la boîte de dialogue modale personnalisée ---
+        const customModalOverlay = document.getElementById('custom-modal-overlay');
+        const modalMessage = document.getElementById('modal-message');
+        const modalConfirmBtn = document.getElementById('modal-confirm-btn');
+        const modalCancelBtn = document.getElementById('modal-cancel-btn');
+        let modalCallback = null;
+
+        function showCustomModal(message, callback) {
+            modalMessage.textContent = message;
+            modalCallback = callback;
+            customModalOverlay.classList.add('visible');
+        }
+
+        function hideCustomModal() {
+            customModalOverlay.classList.remove('visible');
+            modalCallback = null;
+        }
+
+        modalConfirmBtn.addEventListener('click', () => {
+            if (modalCallback) {
+                modalCallback(true);
             }
+            hideCustomModal();
+        });
+
+        modalCancelBtn.addEventListener('click', () => {
+            if (modalCallback) {
+                modalCallback(false);
+            }
+            hideCustomModal();
         });
 
         // Compteur de téléchargements
         let downloads = parseInt(localStorage.getItem('gameDownloads')) || 0; // Charge le nombre de téléchargements depuis le stockage local, ou 0 si inexistant
         const downloadCountElement = document.getElementById('download-count');
         const downloadButton = document.getElementById('download-button');
-        const resetDownloadsButton = document.getElementById('reset-downloads');
         
-        // Indicateur pour savoir si l'utilisateur a déjà téléchargé (pour ne compter qu'une fois sur le TOTAL affiché)
+        // Indicateur pour savoir si l'utilisateur a déjà été compté pour le téléchargement
         let hasDownloadedForCounter = localStorage.getItem('hasDownloadedForCounter') === 'true'; 
 
         function updateDownloadCount() {
@@ -409,38 +509,23 @@
 
         // Ajoute un écouteur d'événements au bouton de téléchargement
         downloadButton.addEventListener('click', (event) => {
-            event.preventDefault(); // Empêche le comportement par défaut du bouton (téléchargement immédiat)
+            event.preventDefault(); // Empêche le comportement par défaut du bouton
 
-            const userConfirmed = window.prompt("Voulez-vous télécharger le jeu ? Tapez 'oui' pour confirmer.");
-
-            if (userConfirmed && userConfirmed.toLowerCase() === 'oui') {
-                // Seulement si l'utilisateur n'a pas déjà été compté pour le total global
-                if (!hasDownloadedForCounter) {
-                    downloads++; // Incrémente le compteur global
-                    localStorage.setItem('gameDownloads', downloads); // Sauvegarde le nouveau total global
-                    localStorage.setItem('hasDownloadedForCounter', 'true'); // Marque comme compté pour cet utilisateur
-                    hasDownloadedForCounter = true; // Met à jour la variable en mémoire
-                    updateDownloadCount(); // Met à jour l'affichage
+            showCustomModal("Voulez-vous télécharger le jeu 'Mon Super Jeu' ?", (confirmed) => {
+                if (confirmed) {
+                    if (!hasDownloadedForCounter) { // Seulement si l'utilisateur n'a pas déjà été compté
+                        downloads++; // Incrémente le compteur global
+                        localStorage.setItem('gameDownloads', downloads); // Sauvegarde le nouveau total global
+                        localStorage.setItem('hasDownloadedForCounter', 'true'); // Marque comme compté pour cet utilisateur
+                        hasDownloadedForCounter = true; // Met à jour la variable en mémoire
+                        updateDownloadCount(); // Met à jour l'affichage
+                    }
+                    // Lance le téléchargement du fichier, quel que soit l'état du compteur unique
+                    window.location.href = 'game/clicker.exe'; 
+                } else {
+                    console.log("Téléchargement annulé par l'utilisateur.");
                 }
-                // Lance le téléchargement du fichier, quel que soit l'état du compteur unique
-                window.location.href = 'game/clicker.exe'; 
-            } else {
-                console.log("Téléchargement annulé par l'utilisateur.");
-            }
-        });
-
-        // Ajoute un écouteur d'événements au bouton de réinitialisation
-        resetDownloadsButton.addEventListener('click', () => {
-            const confirmReset = window.confirm("Êtes-vous sûr de vouloir réinitialiser le compteur de téléchargements pour ce navigateur ?");
-            if (confirmReset) {
-                localStorage.removeItem('gameDownloads'); // Réinitialise le compteur global
-                localStorage.removeItem('hasDownloadedForCounter'); // Réinitialise l'indicateur unique
-                downloads = 0; // Met à jour la variable en mémoire
-                hasDownloadedForCounter = false; // Met à jour la variable en mémoire
-                updateDownloadCount(); // Met à jour l'affichage
-                // Afficher un message de confirmation
-                alert("Le compteur a été réinitialisé !"); // Utilisation de alert pour un message simple de confirmation
-            }
+            });
         });
     </script>
 </body>
