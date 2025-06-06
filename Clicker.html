@@ -9,7 +9,7 @@
     <!-- Chargement de Font Awesome pour les icônes -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* Variables CSS pour une gestion facile des couleurs */
+        /* Variables CSS pour une gestion facile des couleurs (Harmonisées avec la page d'accueil) */
         :root {
             --primary-dark: #4A00B7; /* Violet foncé */
             --primary-light: #6A1B9A; /* Violet clair */
@@ -26,7 +26,6 @@
             --glow-color: rgba(78, 205, 196, 0.6); /* Couleur pour les effets de lumière */
         }
 
-        /* Styles globaux pour le corps de la page */
         body {
             font-family: 'Inter', sans-serif;
             line-height: 1.6;
@@ -50,7 +49,7 @@
             box-sizing: border-box;
         }
 
-        /* Barre de navigation */
+        /* Barre de navigation (Harmonisée avec la page d'accueil) */
         .navbar {
             width: 100%;
             background-color: var(--primary-dark);
@@ -218,7 +217,7 @@
             text-align: center;
             position: relative;
             overflow: hidden;
-            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
             max-width: 1000px; /* Largeur augmentée */
             margin-left: auto;
             margin-right: auto;
@@ -387,16 +386,9 @@
             100% { transform: translateY(-5px); } /* Déplacement augmenté */
         }
 
-        /* Compteur de téléchargements */
+        /* Ancien compteur de téléchargements - Masqué */
         #download-count {
-            margin-top: 25px;
-            font-size: 1.5em; /* Taille augmentée */
-            color: var(--primary-dark);
-            font-weight: 800; /* Plus épais */
-            text-shadow: 1px 1px 3px var(--shadow-light);
-            border-bottom: 2px dashed var(--accent-red); /* Ligne pointillée */
-            padding-bottom: 10px;
-            display: inline-block; /* Pour appliquer le padding/border */
+            display: none; /* Masque complètement l'élément */
         }
 
         /* Message d'avertissement */
@@ -546,10 +538,11 @@
             width: 100%;
             position: relative;
             overflow: hidden;
+            z-index: 1; /* Pour être au-dessus du body background */
         }
         .footer p {
             margin: 0;
-            padding: 8px 0; /* Padding augmenté */
+            padding: 8px 0;
         }
         .footer a {
             color: var(--primary-dark);
@@ -599,7 +592,6 @@
             .section-card p, .section-card ul, .section-card ol { font-size: 0.95em; }
             .content-image { border-radius: 12px; border: 3px solid var(--bg-gradient-end); }
             .download-button { font-size: 1.4em; padding: 18px 35px; gap: 12px; border-radius: 10px; }
-            #download-count { font-size: 1.2em; }
             .warning { padding: 20px; border-left-width: 6px; border-radius: 8px; }
             .warning i { font-size: 1.5em; }
             .clicker-container { padding: 40px; border-radius: 15px; border-width: 2px; }
@@ -622,7 +614,6 @@
             .section-card ul li i, .section-card ol li i { margin-right: 10px; font-size: 1em; }
             .content-image { border-radius: 10px; border: 2px solid var(--bg-gradient-end); margin: 20px auto; }
             .download-button { font-size: 1.2em; padding: 15px 25px; gap: 10px; border-radius: 8px; }
-            #download-count { font-size: 1.1em; margin-top: 15px; padding-bottom: 8px; }
             .warning { padding: 15px; border-left-width: 5px; border-radius: 6px; font-size: 0.85em; gap: 10px; }
             .warning i { font-size: 1.2em; }
             .warning ul li::before { width: 1em; margin-left: -1em; }
@@ -635,7 +626,7 @@
 </head>
 <body>
     <nav class="navbar">
-        <a href="index.html"><i class="fas fa-home"></i> Accueil</a>
+        <a href="game_collection_hub.html"><i class="fas fa-home"></i> Accueil</a>
         <a href="https://discord.gg/AX2VKE7A" target="_blank" rel="noopener noreferrer"><i class="fas fa-life-ring"></i> Assistance Discord</a>
     </nav>
 
@@ -667,7 +658,7 @@
                 <button id="download-button" class="download-button">
                     <i class="fas fa-cloud-download-alt"></i> Télécharger le Clicker (Windows)
                 </button>
-                <p id="download-count">Nombre de téléchargements : 0</p>
+                <!-- Compteur de téléchargements supprimé -->
                 <div class="warning">
                     <i class="fas fa-exclamation-triangle"></i>
                     <div>
@@ -749,25 +740,13 @@
             }, 200); // Durée de l'animation en ms
         });
 
-        // Compteur de téléchargements
-        let downloads = parseInt(localStorage.getItem('gameDownloads')) || 0;
-        const downloadCountElement = document.getElementById('download-count');
         const downloadButton = document.getElementById('download-button');
         
-        function updateDownloadCount() {
-            downloadCountElement.textContent = `Nombre de téléchargements : ${downloads}`;
-        }
-
-        updateDownloadCount();
-
         downloadButton.addEventListener('click', (event) => {
             event.preventDefault(); // Empêche le comportement par défaut
 
-            downloads++;
-            localStorage.setItem('gameDownloads', downloads);
-            updateDownloadCount();
             
-            // Lance le téléchargement du fichier
+            // Lance le téléchargement du fichier directement
             window.location.href = 'game/clicker.exe'; 
         });
     </script>
