@@ -576,6 +576,10 @@
                 downloadCountElement.textContent = currentCount + 1;
 
                 // Lance le téléchargement du fichier directement
+                // ASSUREZ-VOUS que 'clicker.exe' est bien situé dans le dossier 'game' à la racine de votre hébergement.
+                // Par exemple, si votre page index.html est à 'mon-site.com/index.html',
+                // le fichier 'clicker.exe' doit être accessible à 'mon-site.com/game/clicker.exe'.
+                console.log("Tentative de téléchargement de : game/clicker.exe");
                 window.location.href = 'game/clicker.exe'; 
 
             } catch (error) {
@@ -586,6 +590,10 @@
             }
         });
 
+        // Optionnel : Utiliser onSnapshot pour une mise à jour en temps réel (pour tous les clients)
+        // Ceci est une suggestion pour une fonctionnalité future si vous voulez que tous les visiteurs
+        // voient le compteur mis à jour en direct, même s'ils ne cliquent pas eux-mêmes.
+        /*
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 const docRef = doc(db, DOWNLOAD_DOC_PATH);
@@ -602,6 +610,7 @@
                 });
             }
         });
+        */
     </script>
 </body>
 </html>
