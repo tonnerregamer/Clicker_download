@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Télécharger Tetris !</title>
+    <!-- Chargement de la police Inter depuis Google Fonts pour un look moderne -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Chargement de Font Awesome pour les icônes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Variables CSS pour une gestion facile des couleurs (Harmonisées avec les autres pages) */
+        :root {
+            --primary-dark: #4A00B7; /* Violet foncé */
+            --primary-light: #6A1B9A; /* Violet clair */
+            --accent-red: #FF6B6B; /* Rouge corail */
+            --accent-turquoise: #4ECDC4; /* Turquoise */
+            --bg-gradient-start: #F9F0FF; /* Lavande très claire */
+            --bg-gradient-end: #E0BBE4; /* Mauve doux */
+            --text-dark: #2c2c2c; /* Texte légèrement plus foncé pour un meilleur contraste */
+            --text-light: #ffffff;
+            --card-bg: #ffffff;
+            --shadow-light: rgba(0, 0, 0, 0.08);
+            --shadow-medium: rgba(0, 0, 0, 0.15);
+            --shadow-strong: rgba(0, 0, 0, 0.25);
+            --glow-color: rgba(78, 205, 196, 0.6); /* Couleur pour les effets de lumière */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            color: var(--text-dark);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            align-items: center;
+            overflow-x: hidden; /* Empêche le défilement horizontal */
+        }
+
+        /* Conteneur principal pour le contenu */
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+
+        /* Barre de navigation (Harmonisée avec les autres pages) */
+        .navbar {
+            width: 100%;
+            background-color: var(--primary-dark);
+            padding: 15px 0;
+            box-shadow: 0 4px 15px var(--shadow-strong);
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .navbar a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 600;
+            margin: 0 25px;
+            font-size: 1.15em;
+            transition: color 0.3s ease, transform 0.2s ease;
+            position: relative;
+        }
+        .navbar a:hover {
+            color: var(--accent-turquoise);
+            transform: translateY(-3px);
+        }
+        .navbar a::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: -5px;
+            width: 0;
+            height: 3px;
+            background-color: var(--accent-red);
+            transition: width 0.3s ease, left 0.3s ease;
+        }
+        .navbar a:hover::after {
+            width: 100%;
+            left: 0;
+        }
+        .navbar a i {
+            margin-right: 8px;
+            transition: transform 0.3s ease;
+        }
+        .navbar a:hover i {
+            transform: rotate(5deg) scale(1.1);
+        }
+
+
+        /* Section Héro (Introduction principale) */
+        .hero-section {
+            background: linear-gradient(45deg, var(--primary-dark) 0%, var(--primary-light) 100%);
+            color: var(--text-light);
+            padding: 80px 20px;
+            text-align: center;
+            border-radius: 25px; /* Plus arrondi */
+            margin-top: 50px; /* Marge supérieure augmentée */
+            margin-left: auto; /* Centrage horizontal */
+            margin-right: auto; /* Centrage horizontal */
+            box-shadow: 0 15px 40px var(--shadow-strong); /* Ombre plus prononcée */
+            position: relative;
+            overflow: hidden;
+            max-width: 1050px; /* Largeur légèrement augmentée */
+            perspective: 1000px; /* Pour l'effet 3D */
+            transform: rotateX(3deg) rotateY(1deg); /* Léger effet 3D */
+            transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        .hero-section:hover {
+            transform: rotateX(0deg) rotateY(0deg) scale(1.01); /* Retour et léger zoom au survol */
+            box-shadow: 0 20px 50px var(--shadow-strong);
+        }
+        .hero-section::before, .hero-section::after, .hero-section .pattern-shape {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.25;
+            filter: blur(18px); /* Adoucir les formes */
+            z-index: 0;
+        }
+        .hero-section::before {
+            top: -70px;
+            left: -70px;
+            width: 250px;
+            height: 250px;
+            background: var(--accent-turquoise);
+            animation: pulse-glow 5s infinite alternate ease-in-out;
+        }
+        .hero-section::after {
+            bottom: -80px;
+            right: -80px;
+            width: 300px;
+            height: 300px;
+            background: var(--accent-red);
+            animation: pulse-glow 6s infinite alternate reverse ease-in-out;
+        }
+        .hero-section .pattern-shape {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            transform: rotate(45deg);
+            animation: float-around 10s infinite linear;
+        }
+        .hero-section .pattern-shape:nth-child(1) { top: 10%; left: 10%; width: 50px; height: 50px; }
+        .hero-section .pattern-shape:nth-child(2) { bottom: 20%; right: 15%; width: 70px; height: 70px; animation-delay: 2s; }
+        .hero-section .pattern-shape:nth-child(3) { top: 30%; right: 5%; width: 40px; height: 40px; animation-delay: 4s; }
+
+        @keyframes pulse-glow {
+            0% { transform: scale(0.9); opacity: 0.25; }
+            100% { transform: scale(1.1); opacity: 0.45; }
+        }
+        @keyframes float-around {
+            0% { transform: translate(0, 0) rotate(45deg); }
+            25% { transform: translate(20px, -20px) rotate(50deg); }
+            50% { transform: translate(0, -40px) rotate(40deg); }
+            75% { transform: translate(-20px, -20px) rotate(35deg); }
+            100% { transform: translate(0, 0) rotate(45deg); }
+        }
+
+        .hero-section h1 {
+            font-size: 4.2em; /* Taille de police augmentée */
+            margin-bottom: 20px;
+            text-shadow: 4px 4px 10px var(--shadow-strong); /* Ombre plus forte */
+            font-weight: 900; /* Plus épais */
+            letter-spacing: 2px; /* Espacement des lettres */
+            z-index: 1; /* Pour être au-dessus des motifs */
+            position: relative;
+        }
+        .hero-section p {
+            font-size: 1.6em; /* Taille de police augmentée */
+            opacity: 0.98;
+            max-width: 800px;
+            margin: 0 auto 40px auto;
+            z-index: 1;
+            position: relative;
+        }
+        .hero-image {
+            max-width: 95%; /* Image légèrement plus grande */
+            height: auto;
+            border-radius: 20px; /* Plus arrondi */
+            margin-top: 40px;
+            box-shadow: 0 12px 35px var(--shadow-strong);
+            transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.5s ease;
+            border: 6px solid var(--accent-turquoise); /* Cadre coloré plus épais */
+            z-index: 1;
+            position: relative;
+        }
+        .hero-image:hover {
+            transform: scale(1.04) rotate(-2deg); /* Effet plus prononcé */
+            box-shadow: 0 20px 50px var(--shadow-strong);
+        }
+
+        /* Contenu principal flexible */
+        .main-content {
+            flex-grow: 1;
+            padding: 50px 0; /* Padding augmenté */
+            display: flex;
+            flex-direction: column;
+            gap: 50px; /* Espace augmenté entre les sections */
+            width: 100%;
+        }
+
+        /* Style des sections de contenu */
+        .section-card {
+            background-color: var(--card-bg);
+            padding: 50px; /* Padding augmenté */
+            margin-bottom: 25px; /* Marge augmentée */
+            border-radius: 25px; /* Plus arrondi */
+            box-shadow: 0 10px 30px var(--shadow-medium);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+            max-width: 1000px; /* Largeur augmentée */
+            margin-left: auto;
+            margin-right: auto;
+            border: 3px solid var(--bg-gradient-end); /* Bordure douce plus épaisse */
+        }
+        .section-card::before, .section-card::after {
+            content: '';
+            position: absolute;
+            background: var(--accent-turquoise);
+            opacity: 0.15;
+            filter: blur(12px);
+            border-radius: 50%;
+            z-index: 0;
+        }
+        .section-card::before {
+            width: 120px;
+            height: 120px;
+            top: -40px;
+            left: -40px;
+            animation: float-element 7s infinite ease-in-out;
+        }
+        .section-card::after {
+            background: var(--accent-red);
+            width: 100px;
+            height: 100px;
+            bottom: -30px;
+            right: -30px;
+            animation: float-element 6s infinite ease-in-out reverse;
+        }
+        @keyframes float-element {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(7deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+
+        .section-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px var(--shadow-strong);
+        }
+
+        .section-card h2 {
+            color: var(--primary-dark);
+            font-size: 3em; /* Taille de police augmentée */
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            position: relative;
+            font-weight: 800; /* Plus épais */
+            text-shadow: 2px 2px 5px var(--shadow-light);
+            z-index: 1;
+        }
+        .section-card h2::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            transform: translateX(-50%);
+            width: 100px; /* Plus large */
+            height: 6px; /* Plus épais */
+            background-color: var(--accent-red);
+            border-radius: 3px;
+            box-shadow: 0 3px 6px var(--shadow-light);
+        }
+
+        .section-card p, .section-card ul, .section-card ol {
+            font-size: 1.2em; /* Taille de police légèrement augmentée */
+            color: #3f3f3f; /* Couleur légèrement plus foncée */
+            margin-bottom: 22px;
+            line-height: 1.9; /* Interligne plus grand */
+            z-index: 1;
+        }
+
+        .section-card ul, .section-card ol {
+            padding-left: 35px;
+            text-align: left;
+            max-width: 750px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .section-card ul li, .section-card ol li {
+            margin-bottom: 15px;
+            position: relative;
+            padding-left: 8px;
+        }
+        .section-card ul li i, .section-card ol li i {
+            margin-right: 15px;
+            font-size: 1.2em;
+            transition: transform 0.3s ease;
+        }
+        .section-card ul li:hover i, .section-card ol li:hover i {
+            transform: translateX(8px) scale(1.15) rotate(5deg);
+        }
+
+
+        /* Styles pour les images dans les sections */
+        .content-image {
+            max-width: 95%; /* Images légèrement plus grandes */
+            height: auto;
+            border-radius: 18px; /* Plus arrondi */
+            margin: 35px auto;
+            display: block;
+            box-shadow: 0 8px 25px var(--shadow-medium);
+            border: 4px solid var(--bg-gradient-end); /* Bordure plus épaisse */
+            transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+        }
+        .content-image:hover {
+            transform: scale(1.02) rotate(1deg);
+            box-shadow: 0 15px 40px var(--shadow-strong);
+            border-color: var(--primary-light); /* Changement de couleur de bordure au survol */
+        }
+
+        /* Style du bouton de téléchargement (section download-area) */
+        .download-area {
+            background: linear-gradient(160deg, #f3e9ff 0%, #d8c2ed 100%); /* Nouveau dégradé harmonieux */
+            box-shadow: 0 15px 40px var(--shadow-strong); /* Ombre plus forte */
+        }
+
+        .download-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 18px; /* Espacement augmenté */
+            background: linear-gradient(45deg, #FF4500 0%, #FF8C6B 100%); /* Dégradé plus vif (orange-rouge) */
+            color: var(--text-light);
+            padding: 25px 60px; /* Padding augmenté */
+            border: none;
+            border-radius: 15px; /* Plus arrondi */
+            text-decoration: none;
+            font-size: 2em; /* Taille de police augmentée */
+            font-weight: 900; /* Ultra épais */
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 15px 40px rgba(255, 69, 0, 0.6); /* Ombre avec la nouvelle couleur */
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        .download-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -120%; /* Plus de distance */
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.35); /* Brillance plus prononcée */
+            transform: skewX(-30deg);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); /* Transition plus douce */
+            z-index: -1;
+        }
+        .download-button:hover::before {
+            left: 120%; /* Plus de distance */
+        }
+        .download-button:hover {
+            transform: translateY(-10px) scale(1.05); /* Effet plus prononcé */
+            box-shadow: 0 25px 60px rgba(255, 69, 0, 0.8); /* Ombre au survol plus forte */
+        }
+        .download-button:active {
+            transform: translateY(0);
+            box-shadow: 0 10px 25px rgba(255, 69, 0, 0.5);
+        }
+        .download-button i {
+            font-size: 1.2em; /* Taille de l'icône augmentée */
+            animation: bounce 1.2s infinite alternate ease-in-out; /* Animation plus douce */
+        }
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-5px); } /* Déplacement augmenté */
+        }
+
+        /* Ancien compteur de téléchargements - Masqué */
+        #download-count {
+            display: none; /* Masque complètement l'élément */
+        }
+
+        /* Message d'avertissement */
+        .warning {
+            margin-top: 35px;
+            font-size: 1.05em;
+            color: #555;
+            background-color: #fffacd;
+            border-left: 8px solid #ffc107; /* Bordure plus épaisse */
+            padding: 30px; /* Padding augmenté */
+            border-radius: 12px; /* Plus arrondi */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: left;
+            max-width: 750px;
+            margin-left: auto;
+            margin-right: auto;
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+        }
+        .warning strong {
+            color: #da9f04;
+        }
+        .warning i {
+            font-size: 1.8em; /* Taille de l'icône augmentée */
+            color: #ffc107;
+            animation: rotate-warning 2s infinite linear; /* Animation de rotation */
+        }
+        @keyframes rotate-warning {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .warning ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        .warning ul li {
+            margin-bottom: 8px;
+            padding-left: 0;
+        }
+        .warning ul li::before {
+            content: '➤'; /* Puce personnalisée */
+            color: #da9f04;
+            font-weight: bold;
+            display: inline-block;
+            width: 1.2em;
+            margin-left: -1.2em;
+            transform: translateY(-2px);
+        }
+
+        /* Section du pied de page */
+        .footer {
+            margin-top: 70px; /* Marge augmentée */
+            padding: 40px 20px; /* Padding augmenté */
+            text-align: center;
+            color: #555; /* Couleur plus foncée */
+            font-size: 1.1em; /* Taille augmentée */
+            border-top: 2px solid #e0e0e0; /* Bordure plus épaisse */
+            background-color: var(--card-bg);
+            border-radius: 25px 25px 0 0; /* Coins arrondis plus prononcés */
+            box-shadow: 0 -10px 30px var(--shadow-medium); /* Ombre plus forte */
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            z-index: 1; /* Pour être au-dessus du body background */
+        }
+        .footer p {
+            margin: 0;
+            padding: 8px 0;
+        }
+        .footer a {
+            color: var(--primary-dark);
+            text-decoration: none;
+            font-weight: 700; /* Plus épais */
+            transition: color 0.3s ease;
+        }
+        .footer a:hover {
+            color: var(--accent-red);
+            text-decoration: underline;
+        }
+        .footer i {
+            color: var(--accent-red);
+            font-size: 1.2em; /* Taille augmentée */
+            animation: heartbeat 1.5s infinite ease-in-out; /* Animation plus douce */
+        }
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.15); } /* Zoom plus prononcé */
+            50% { transform: scale(1); }
+            75% { transform: scale(1.15); }
+            100% { transform: scale(1); }
+        }
+
+        /* Adaptations pour les écrans plus petits (responsive design) */
+        @media (max-width: 1024px) {
+            .hero-section { margin-top: 40px; padding: 70px 20px; transform: none; }
+            .hero-section h1 { font-size: 3.5em; }
+            .hero-section p { font-size: 1.3em; }
+            .section-card { padding: 40px; }
+            .section-card h2 { font-size: 2.5em; }
+            .section-card p, .section-card ul, .section-card ol { font-size: 1.1em; }
+            .download-button { font-size: 1.7em; padding: 20px 45px; }
+        }
+
+        @media (max-width: 768px) {
+            .navbar a { margin: 0 12px; font-size: 0.95em; }
+            .hero-section { padding: 50px 15px; margin-top: 30px; border-radius: 15px; }
+            .hero-section h1 { font-size: 2.8em; }
+            .hero-section p { font-size: 1em; }
+            .hero-image { border-radius: 10px; border: 4px solid var(--accent-turquoise); }
+            .section-card { padding: 30px; margin-bottom: 20px; border-radius: 15px; }
+            .section-card h2 { font-size: 2.2em; margin-bottom: 20px; padding-bottom: 15px; }
+            .section-card p, .section-card ul, .section-card ol { font-size: 0.95em; }
+            .content-image { border-radius: 12px; border: 3px solid var(--bg-gradient-end); }
+            .download-button { font-size: 1.4em; padding: 18px 35px; gap: 12px; border-radius: 10px; }
+            .warning { padding: 20px; border-left-width: 6px; border-radius: 8px; }
+            .warning i { font-size: 1.5em; }
+            .footer { margin-top: 50px; padding: 30px 15px; font-size: 1em; border-radius: 15px 15px 0 0; }
+        }
+
+        @media (max-width: 480px) {
+            .navbar { padding: 10px 0; }
+            .navbar a { display: block; margin: 8px 0; font-size: 0.9em; }
+            .hero-section { padding: 30px 10px; margin-top: 20px; border-radius: 10px; }
+            .hero-section h1 { font-size: 2.2em; margin-bottom: 10px; }
+            .hero-section p { font-size: 0.9em; margin-bottom: 20px; }
+            .hero-image { border-radius: 8px; border: 3px solid var(--accent-turquoise); margin-top: 20px; }
+            .section-card { padding: 20px; margin-bottom: 15px; border-radius: 10px; }
+            .section-card h2 { font-size: 1.8em; margin-bottom: 15px; padding-bottom: 10px; }
+            .section-card p, .section-card ul, .section-card ol { font-size: 0.9em; }
+            .section-card ul li, .section-card ol li { margin-bottom: 10px; }
+            .section-card ul li i, .section-card ol li i { margin-right: 10px; font-size: 1em; }
+            .content-image { border-radius: 10px; border: 2px solid var(--bg-gradient-end); margin: 20px auto; }
+            .download-button { font-size: 1.2em; padding: 15px 25px; gap: 10px; border-radius: 8px; }
+            .warning { padding: 15px; border-left-width: 5px; border-radius: 6px; font-size: 0.85em; gap: 10px; }
+            .warning i { font-size: 1.2em; }
+            .warning ul li::before { width: 1em; margin-left: -1em; }
+            .footer { margin-top: 40px; padding: 25px 10px; font-size: 0.9em; border-radius: 10px 10px 0 0; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="index.html"><i class="fas fa-home"></i> Accueil</a>
+        <a href="https://discord.gg/AX2VKE7A" target="_blank" rel="noopener noreferrer"><i class="fas fa-life-ring"></i> Assistance Discord</a>
+    </nav>
+
+    <div class="container">
+        <!-- Section Héro avec une image plus percutante et un titre accrocheur -->
+        <section class="hero-section">
+            <span class="pattern-shape"></span>
+            <span class="pattern-shape"></span>
+            <span class="pattern-shape"></span>
+            <h1>Découvrez Tetris !</h1>
+            <p>Redécouvrez le classique indémodable du jeu de puzzle, optimisé pour votre plaisir !</p>
+            <!-- Image spécifique à Tetris -->
+            <img src="https://placehold.co/900x450/4A00B7/FFFFFF?text=Tetris+Jeu" onerror="this.onerror=null;this.src='https://placehold.co/900x450/4A00B7/FFFFFF?text=Tetris+Jeu';" alt="[Image du jeu Tetris Écran Titre]" class="hero-image">
+        </section>
+
+        <main class="main-content">
+            <!-- Section "À propos" avec un design de carte -->
+            <section class="section-card">
+                <h2>🎮 À propos de Tetris</h2>
+                <p>Ce <strong>Tetris</strong> est une adaptation moderne du célèbre jeu de blocs, vous offrant une expérience de jeu fluide et des graphismes épurés. Empilez les blocs, faites des lignes et battez votre meilleur score !</p>
+                <!-- Image spécifique à Tetris -->
+                <img src="https://placehold.co/800x400/4ECDC4/333333?text=Tetris+Gameplay" onerror="this.onerror=null;this.src='https://placehold.co/800x400/4ECDC4/333333?text=Tetris+Gameplay';" alt="[Image du jeu Tetris en action]" class="content-image">
+                <p>N'hésitez pas à nous rejoindre sur notre serveur Discord si vous avez des questions ou souhaitez partager vos scores !</p>
+                <a href="https://discord.gg/AX2VKE7A" target="_blank" rel="noopener noreferrer" style="color: var(--primary-dark); text-decoration: underline; font-weight: 600;">Rejoignez-nous sur Discord !</a>
+            </section>
+
+            <!-- Section de téléchargement stylisée -->
+            <section class="section-card download-area">
+                <h2>⬇️ Prêt à jouer ? Téléchargez le jeu !</h2>
+                <p>Cliquez sur le bouton ci-dessous pour télécharger le jeu Tetris (version la plus récente). Il s'agit d'un dossier compressé (.zip) contenant le jeu. Il vous suffira de l'extraire !</p>
+                <button id="download-button" class="download-button">
+                    <i class="fas fa-box-open"></i> Télécharger Tetris (Dossier ZIP)
+                </button>
+                <div class="warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <div>
+                        <ul>
+                            <li><strong>Important :</strong> Vous téléchargerez un fichier compressé (.zip). Après le téléchargement, vous devrez le "décompresser" ou l'"extraire" pour accéder au dossier du jeu et au fichier exécutable.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Section "Guide d'Installation" -->
+            <section class="section-card">
+                <h2>⚙️ Guide de Lancement Facile</h2>
+                <p>Commencez à jouer en quelques étapes simples :</p>
+                <ol>
+                    <li><i class="fas fa-file-download" style="color: var(--accent-turquoise);"></i><strong>Téléchargez le Fichier :</strong> Cliquez sur le bouton "Télécharger Tetris" ci-dessus. Le fichier <code>Tetris_Game.zip</code> se retrouvera dans votre dossier "Téléchargements".</li>
+                    <li><i class="fas fa-folder-open" style="color: var(--accent-turquoise);"></i><strong>Décompressez le Dossier :</strong> Faites un clic droit sur le fichier <code>Tetris_Game.zip</code> et sélectionnez "Extraire tout..." ou "Décompresser". Choisissez un emplacement sur votre ordinateur.</li>
+                    <li><i class="fas fa-play-circle" style="color: var(--accent-turquoise);"></i><strong>Lancez le Jeu :</strong> Ouvrez le dossier "Tetris_Game" que vous venez d'extraire, puis double-cliquez sur <code>Tetris.exe</code> pour lancer le jeu. C'est tout !</li>
+                </ol>
+                <p>Profitez du jeu !</p>
+            </section>
+
+            <!-- Section "Configuration Requise" -->
+            <section class="section-card" id="requirements">
+                <h2>💻 Configuration Requise (Minimum)</h2>
+                <p>Voici ce dont vous aurez besoin pour profiter pleinement de Tetris :</p>
+                <ul>
+                    <li><i class="fab fa-windows" style="color: var(--accent-red);"></i><strong>Système d'exploitation :</strong> Windows 7 / 8 / 10 / 11 (64-bit)</li>
+                    <li><i class="fas fa-microchip" style="color: var(--accent-red);"></i><strong>Processeur :</strong> Intel Core i3 ou équivalent</li>
+                    <li><i class="fas fa-memory" style="color: var(--accent-red);"></i><strong>Mémoire vive (RAM) :</strong> 2 Go</li>
+                    <li><i class="fas fa-server" style="color: var(--accent-red);"></i><strong>Espace Disque :</strong> Moins de 200 Mo d'espace libre</li>
+                    <li><i class="fas fa-gem" style="color: var(--accent-red);"></i><strong>DirectX :</strong> Version 9.0c</li>
+                </ul>
+                <p>Le jeu est léger et fonctionne sur la plupart des configurations modernes.</p>
+            </section>
+
+            <!-- Section "Dépannage Courant" -->
+            <section class="section-card">
+                <h2>🛠️ Dépannage Courant</h2>
+                <p>Si vous rencontrez des difficultés :</p>
+                <ul>
+                    <li><i class="fas fa-ban" style="color: var(--primary-dark);"></i><strong>Avertissement Navigateur :</strong> Si le téléchargement est bloqué, cherchez "Conserver" ou "Télécharger quand même" dans la notification de votre navigateur.</li>
+                    <li><i class="fas fa-shield-alt" style="color: var(--primary-dark);"></i><strong>Antivirus :</strong> Votre antivirus pourrait mettre le fichier en quarantaine. Ajoutez le dossier extrait à la liste d'exceptions si vous nous faites confiance.</li>
+                    <li><i class="fas fa-hdd" style="color: var(--primary-dark);"></i><strong>Espace Disque :</strong> Assurez-vous d'avoir suffisamment d'espace libre pour l'extraction.</li>
+                    <li><i class="fas fa-file-archive" style="color: var(--primary-dark);"></i><strong>Problèmes de Décompression :</strong> Assurez-vous d'utiliser un outil de décompression standard (comme celui intégré à Windows ou 7-Zip).</li>
+                </ul>
+                <p>Si le problème persiste, notre équipe d'assistance Discord est là pour vous aider !</p>
+            </section>
+        </main>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2024 Mes Super Jeux. Tous droits réservés.</p>
+        <p>Conçu avec <i class="fas fa-heart"></i> pour les joueurs passionnés.</p>
+    </footer>
+
+    <script>
+        const downloadButton = document.getElementById('download-button');
+        
+        downloadButton.addEventListener('click', (event) => {
+            event.preventDefault(); // Empêche le comportement par défaut
+
+            // Lance le téléchargement d'un fichier ZIP qui simule un dossier
+            // REMPLACEZ 'game/Tetris_Game.zip' par le CHEMIN RÉEL ou l'URL de votre fichier .zip une fois hébergé
+            window.location.href = 'game/Tetris_Game.zip'; 
+        });
+    </script>
+</body>
+</html>
